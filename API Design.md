@@ -1,4 +1,4 @@
-ptional design for the Android application cloud backend
+Exceptional design for the Android application cloud backend
 
 ### Requirements
  1. Registering a (deviceId, userEmail) pair with the server which will return an authentication token
