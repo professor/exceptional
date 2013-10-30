@@ -35,19 +35,23 @@ Response Body: {
 ### Fetch the contents of the alphas
 ```
 Method: GET /alphas
+Method: GET /alphas/omg1.0
 Response Body: {
+    version: "OMG 1.0"
     alphas: [
         {
             alphaId: <guid>,
             alphaName: "Some Title Here",
-            cards: [
+            color: "Blue",
+            concern: "Customer",
+            states: [
                 {
-                    cardId: <guid>,
-                    cardName: "Card Name Here",
-                    checkBoxes: [
+                    stateId: <guid>,
+                    stateName: "Card Name Here",
+                    checklistItems: [
                         {
-                            checkboxId: <guid>,
-                            checkBoxLabel: "Some label here"
+                            checklistItemId: <guid>,
+                            ckecklistItemName: "Some label here"
                         },
                         /*some other checkboxes here*/
                     ]
