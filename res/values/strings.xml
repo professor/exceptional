@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">SEMAT</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="introduction">SEMAT allows your team to reflect on your team progress systemically and identity new tasks to help your team achieve its goal \n \n  It provides \n - A holistic view of the project \n - A structure for retrospective \n - A mechanism for monitoring progress \n - A mechanism for risk management \n - A mechanism for steering projects \n \n  In a simple, lightweight, non-prescriptive and method-agnostic fashion. </string>
+    <string name="current_state">Summary of current state</string>
+    <string name="next_actions">Next action</string>
+    
 </resources>
