@@ -13,7 +13,7 @@ Please look at the project zip, and look at the /res/layout/*.xml files for the 
 Several of the screens will be assembled programmatically (e.g. ListView) to create the final product.
 
 ## Presentation Tier
-<<Insert updated UI mockups>>
+_Insert updated UI mockups_
 
 
 ## Content Provider
