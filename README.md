@@ -13,6 +13,7 @@ Please look at the project zip, and look at the /res/layout/*.xml files for the 
 Several of the screens will be assembled programmatically (e.g. ListView) to create the final product.
 
 ## Presentation Tier
+We've identified the intents for each activity and have updated our UI mockups.
 _Insert updated UI mockups_
 
 
@@ -71,6 +72,8 @@ On the client, there are several entities.
 * /entities/user (CRUD)
 * /entities/project_state (CRUD)
 * /entities/application_state (CRUD)
+
+_Insert class diagram here_
 
 
 ## Integration Tier
