@@ -40,18 +40,20 @@ Response Body: {
     version: "OMG 1.0"
     alphas: [
         {
-            alphaId: <guid>,
-            alphaName: "Some Title Here",
+            id: <guid>,
+            name: "Some Title Here",
             color: "Blue",
             concern: "Customer",
+            definition: "The people, groups, or organizations who affect or are affected by a software system.",
+            description: "The stakeholders provide the opportunity, and are the source of the requirements for the...",
             states: [
                 {
-                    stateId: <guid>,
-                    stateName: "Card Name Here",
+                    id: <guid>,
+                    name: "Card Name Here",
                     checklistItems: [
                         {
-                            checklistItemId: <guid>,
-                            ckecklistItemName: "Some label here"
+                            id: <guid>,
+                            name: "Some label here"
                         },
                         /*some other checkboxes here*/
                     ]
