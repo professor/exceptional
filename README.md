@@ -45,7 +45,7 @@ On the client, there are several entities.
 | team_id | integer |
 | json | blob |
 
-5) The current user state. This includes the current user google email address, the selected team id and team name, and a authentication token for using the json integration layer. At present, we are exploring whether to store this information in a bundle or in a content provider 
+5) The current application state. This includes the current user google email address, the selected team id and team name, and a authentication token for using the json integration layer. At present, we are exploring whether to store this information in a bundle or in a content provider 
 
 
 On the server, the database is defined by this schema:
