@@ -51,5 +51,13 @@ On the client, there are several entities.
 On the server, the database is defined by this schema:
 https://github.com/professor/semat/blob/master/db/schema.rb
 
-* [Application Tier]( )
-* [Integration Tier]( )
+## Application Tier
+/entities/alpha
+/entities/state
+/entities/team
+/entities/user
+
+
+## Integration Tier
+
+
