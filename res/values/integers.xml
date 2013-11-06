@@ -1,0 +1,5 @@
+<resources>
+
+    <!-- Integers for the index_alpha layout -->
+    <integer name="index_alpha__num_columns">2</integer>
+</resources>
