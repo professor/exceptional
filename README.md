@@ -14,39 +14,38 @@ routinely have internet access, using a ContentProvider will allow us to have a 
 On the client, there are several entities.
 1) The alphas state cards and checklists will be fetched using json. We plan to store the json entity in a local cache.
 
-
-### Table: Alpha State Cards
+### Table: alpha_state_cards
 | Column | Type  |
 | --- | --- | 
 | version | text | 
 | json | blob |
 
-2) The current user state. This includes the current user google email address, the selected team id and team name, and a authentication token for using the json integration layer. At present, we are exploring whether to store this information in a bundle or in a content provider 
 
+2) List of teams for the user. For most users this will be empty or one team; a power user might manage multiple teams. 
 
-3) List of teams (id, name). While for most users this will be empty or one team, a power user might manage multiple teams. 
-
-### Table: Teams
+### Table: teams
 | Column | Type  |
 | --- | --- | 
 | id | integer | 
 | name | string |
 
-4) List of checked items for a given team. This will be fetched using json. We plan to store the json entity in a local cache.
+3) List of checked items for a given team. This will be fetched using json. We plan to store the json entity in a local cache.
 
-### Table: Checked_items
+### Table: checked_items
 | Column | Type  |
 | --- | --- | 
 | team_id | integer |
 | json | blob |
 
-5) List of comments for a given team. This will be fetched using json. We plan to store the json entity in a local cache.
+4) List of comments for a given team. This will be fetched using json. We plan to store the json entity in a local cache.
 
-### Table: Comments
+### Table: comments
 | Column | Type  |
 | --- | --- | 
 | team_id | integer |
 | json | blob |
+
+5) The current user state. This includes the current user google email address, the selected team id and team name, and a authentication token for using the json integration layer. At present, we are exploring whether to store this information in a bundle or in a content provider 
 
 
 On the server, the database is defined by this schema:
