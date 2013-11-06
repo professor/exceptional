@@ -52,10 +52,13 @@ On the server, the database is defined by this schema:
 https://github.com/professor/semat/blob/master/db/schema.rb
 
 ## Application Tier
-/entities/alpha
-/entities/state
-/entities/team
-/entities/user
+* /entities/alpha
+* /entities/card (belongs to an alpha)
+* /entities/checklist_item (belongs to a state card)
+* /entities/team 
+* /entities/user (CRUD)
+* /entities/project_state (CRUD)
+* /entities/application_state (CRUD)
 
 
 ## Integration Tier
