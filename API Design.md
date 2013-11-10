@@ -68,16 +68,16 @@ Response Body: {
 
 ### Fetch the group memberships
 ```
-Method: GET /groups
+Method: GET /api/v1/users/<emailAddress>/teams.json
 Response Body: {
-    groups: [
+    teams: [
         {
-            groupId: <guid>,
-            groupName: "NotSoExceptional"
+            id: <guid>,
+            name: "NotSoExceptional"
         },
         {
-            groupId: <guid>,
-            groupName: "The Foobar Awesome Conglomerate"
+            id: <guid>,
+            name: "The Foobar Awesome Conglomerate"
         }
     ]
 }
