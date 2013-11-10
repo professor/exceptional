@@ -84,27 +84,30 @@ Response Body: {
 ```
 
 ### Fetch the progress for a specific group
-*Not quite sure if this is really the way to do it here.*
 ```
-Method: GET /progress/<groupId>
+Method: GET /api/v1/progress/<teamId>.json
 Response Body: {
-    currentVersion: 2,
-    checkboxes: [<guid>]
+    currentVersion: 2, #Not sure about this
+    checkboxes: [<guid>, <guid>]
 }
 ```
 
 
 ### Upload the checkbox modifications
 ```
-Method: POST /progress/<groupId>
+Method: POST /api/v1/progress
 Request Body: {
-    currentVersion: 2,
-    checkboxes: [<guid>, <guid>]
+    currentVersion: 2,  #Not sure about this
+    checklist_id: <guid>
+    checked: true 
+    team_id: <teamId>
+    user_id: <userId>
 }
 Response Body: {
-    forceUpdate: true
+    response: true 
 }
 ```
+_response will contain a message if it failed_
 
 ### Upload comments for synchronization
 ```
