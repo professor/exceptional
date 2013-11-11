@@ -121,6 +121,21 @@ Response Body: {
 }
 ```
 
+## Others
+
+### Rename a team
+```
+Method: POST /api/v1/teams/<teamId>/rename
+Request Body: {
+    name: NewName,
+    user_id: 1
+}
+Response Body: {
+    response: true
+}
+```
+_response will contain a message if it failed_
+    
 
 
 
