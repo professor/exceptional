@@ -80,3 +80,11 @@ _Insert class diagram here_
 
 The API is defined here: * [API Design](API Design.md)
 
+
+## Rerefences
+
+For Google Play Authentication:
+package com.manish.googleprofiledemo;
+http://www.javacodegeeks.com/2013/10/google-account-integration-in-android-login-with-gmail.html
+https://github.com/manishsri01/GoogleProfileDemo
+

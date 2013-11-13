@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">SEMAT</string>
@@ -6,5 +7,9 @@
     <string name="introduction">SEMAT allows your team to reflect on your team progress systemically and identity new tasks to help your team achieve its goal \n \n  It provides \n - A holistic view of the project \n - A structure for retrospective \n - A mechanism for monitoring progress \n - A mechanism for risk management \n - A mechanism for steering projects \n \n  In a simple, lightweight, non-prescriptive and method-agnostic fashion. </string>
     <string name="current_state">Summary of current state</string>
     <string name="next_actions">Next action</string>
-    
+    <string name="introduction_activity_display_message">Introduction</string>
+    <string name="login_activity_display_message">Login</string>
+    <string name="title_activity_team_picker">Choose a Team</string>
+    <string name="login_text_view">Please select a user account</string>
+
 </resources>
