@@ -52,6 +52,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.cmu.semat.MainActivity" />
         </activity>
+        <activity
+            android:name="edu.cmu.semat.AlphaActivity"
+            android:label="@string/title_activity_alpha" >
+        </activity>
     </application>
 
 </manifest>

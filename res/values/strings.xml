@@ -11,5 +11,6 @@
     <string name="login_activity_display_message">Login</string>
     <string name="title_activity_team_picker">Choose a Team</string>
     <string name="login_text_view">Please select a user account</string>
+    <string name="title_activity_alpha">AlphaActivity</string>
 
 </resources>
