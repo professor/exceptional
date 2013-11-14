@@ -19,14 +19,13 @@ public class LoginActivity extends ListActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		 System.out.println("loginActivity onCreate");			
 		super.onCreate(savedInstanceState);
 	
 		ArrayList<String> emails = ContactsUtils.userEmailAddressesTEST(this);
 			
 		if(emails.size() == 1) {
-			SharedPreferencesUtil.setCurrentEmailAddress(this, emails.get(0));
-			Intent intent = new Intent(this, TeamPickerActivity.class);
-			startActivity(intent);			
+			moveToNextIntent(emails.get(0));
 		}
 		
 		setContentView(R.layout.login);
@@ -44,8 +43,17 @@ public class LoginActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		String item = (String) getListAdapter().getItem(position);
 		Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+		
+		moveToNextIntent(item);
 	}	    
 
+	private void moveToNextIntent(String selectedEmailAddress) {
+		System.out.println("LoginActivity: selected email: " + selectedEmailAddress);
+		SharedPreferencesUtil.setCurrentEmailAddress(this, selectedEmailAddress);
+		
+		Intent intent = new Intent(this, TeamPickerActivity.class);
+		startActivity(intent);			
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

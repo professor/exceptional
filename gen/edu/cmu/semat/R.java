@@ -208,7 +208,7 @@ containing a value of this type.
         public static final int ic_plusone_tall_off_client=0x7f02001c;
     }
     public static final class id {
-        public static final int action_settings=0x7f050015;
+        public static final int action_settings=0x7f050014;
         public static final int checkBox1=0x7f05000a;
         public static final int content_alpha__next_button=0x7f050011;
         public static final int content_alpha__notes_button=0x7f050010;
@@ -228,7 +228,6 @@ containing a value of this type.
         public static final int normal=0x7f050001;
         public static final int pager=0x7f050005;
         public static final int satellite=0x7f050002;
-        public static final int team_picker_list_view=0x7f050014;
         public static final int terrain=0x7f050003;
     }
     public static final class integer {

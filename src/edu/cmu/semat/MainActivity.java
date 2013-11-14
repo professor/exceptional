@@ -11,10 +11,20 @@ import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class MainActivity extends Activity {
 
+//	@Override
+//	protected void onCreate(Bundle savedInstanceState) {
+//		super.onCreate(savedInstanceState);
+//		
+//		Intent intent = new Intent(this, TeamPickerActivity.class);
+//		startActivity(intent);	
+//		return;
+//	}
+//	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		//Just for debugging
 //		SharedPreferencesUtil.setSplashScreenSeenByUser(this, false);
 				
