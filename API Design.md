@@ -34,8 +34,8 @@ Response Body: {
 
 ### Fetch the contents of the alphas
 ```
-Method: GET /api/v1/alphas
-Method: GET /api/v1/alphas?version=omg%201.0
+Method: GET /api/v1/alphas.json
+Method: GET /api/v1/alphas.json?version=omg%201.0
 Response Body: {
     version: "OMG 1.0"
     alphas: [
