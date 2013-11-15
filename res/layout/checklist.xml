@@ -10,12 +10,13 @@
         android:layout_alignParentTop="true" />
 
     <TextView
-        android:id="@+id/loginTextView"
+        android:id="@+id/textView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/checkBox1"
-        android:layout_alignBottom="@+id/checkBox1"
+        android:layout_alignTop="@+id/checkBox1"
         android:layout_toRightOf="@+id/checkBox1"
-        android:text="TextView" />
+        android:paddingBottom="20dp"
+      />
 
 </RelativeLayout>
