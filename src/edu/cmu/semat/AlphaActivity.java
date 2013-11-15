@@ -172,6 +172,7 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("Performing alpha fetch callback");
 			ArrayList<Alpha> alphas = Alpha.makeCollectionfromJSONString(result);
 
+			setTitle("Alpha 0: " + alphas.get(0).getName());
 			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(0));
 
 			mPager = (ViewPager)findViewById(R.id.pager);
