@@ -22,10 +22,10 @@ Authorization: Devise <token>
 
 ### Registration
 ```
-Method: POST /registration
+Method: POST /api/v1/users/find_or_register
 Request Body: {
     deviceId: <guid>, 
-    userEmail: "bob.singh@gmail.com"
+    email: "bob.singh@gmail.com"
 }
 Response Body: {
     token: <token>
