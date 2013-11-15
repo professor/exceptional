@@ -2,6 +2,9 @@ package edu.cmu.semat.entities;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class Alpha {
 
 	private int id;
@@ -53,7 +56,44 @@ public class Alpha {
 	public void setCards(ArrayList<Card> cards) {
 		this.cards = cards;
 	}
-	
-	
-	
+
+	public static ArrayList<Alpha> makeCollectionfromJSONString(String json){
+		ArrayList<Alpha> alphas = new ArrayList<Alpha>();
+		JSONObject alphas_json = new JSONObject(json);
+		JSONArray alphas_array = (JSONArray) alphas_json.get("alphas");
+		for(int i = 0; i < alphas_array.length(); i++){
+			JSONObject alpha_json = (JSONObject) alphas_array.get(i);
+			Alpha alpha = new Alpha();
+			alpha.setId(alpha_json.getInt("id"));
+			alpha.setColor(alpha_json.getString("color"));
+			alpha.setName(alpha_json.getString("name"));
+			alpha.setConcern(alpha_json.getString("concern"));
+			alpha.setDefinition(alpha_json.getString("definition"));
+			alpha.setDescription(alpha_json.getString("description"));
+
+			JSONArray cards_array = (JSONArray) alpha_json.get("states");
+			ArrayList<Card> cards = new ArrayList<Card>();
+			for(int j = 0; j < cards_array.length(); j++){
+				JSONObject card_json = (JSONObject) cards_array.get(j);
+				Card card = new Card();
+				card.setId(card_json.getInt("id"));
+				card.setName(card_json.getString("name"));
+
+				JSONArray checklists_array = (JSONArray) card_json.get("checklists");
+				ArrayList<Checklist> checklists = new ArrayList<Checklist>();
+				for(int k = 0; k < checklists_array.length(); k++){
+					JSONObject checklist_json = (JSONObject) checklists_array.get(k);
+					Checklist checklist = new Checklist();
+					checklist.setId(checklist_json.getInt("id"));
+					checklist.setName(checklist_json.getString("name"));
+					checklists.add(checklist);
+				}
+				card.setChecklists(checklists);
+				cards.add(card);
+			}
+			alpha.setCards(cards);
+			alphas.add(alpha);
+		}
+		return alphas;
+	}
 }
