@@ -1,5 +1,7 @@
 package edu.cmu.semat;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -17,6 +19,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import edu.cmu.semat.entities.Alpha;
+import edu.cmu.semat.utils.ServerUtils;
 
 public class AlphaActivity extends FragmentActivity {
 
@@ -53,6 +57,12 @@ public class AlphaActivity extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.alpha, menu);
+		Thread a = new Thread(){
+			public void run(){
+				ArrayList<Alpha> alphas = ServerUtils.alphas();
+			}
+		};
+		a.start();
 		return true;
 	}
 	
