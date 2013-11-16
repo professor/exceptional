@@ -27,9 +27,6 @@ public class LoginActivity extends ListActivity {
 		}
 		
 		setContentView(R.layout.login);
-		
-//	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-//	            R.layout.login_email_list_item, emails);
 
 	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 	            android.R.layout.simple_list_item_1, emails);
