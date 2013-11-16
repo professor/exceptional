@@ -56,6 +56,10 @@
             android:name="edu.cmu.semat.AlphaActivity"
             android:label="@string/title_activity_alpha" >
         </activity>
+        <activity
+            android:name="edu.cmu.semat.OverviewActivity"
+            android:label="@string/title_activity_overview" >
+        </activity>
     </application>
 
 </manifest>

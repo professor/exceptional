@@ -5,9 +5,5 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-    <item
-        android:id="@+id/goto_overview"
-        android:orderInCategory="100"
-        android:title="Overview"/>
 
 </menu>
