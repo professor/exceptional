@@ -1,9 +1,11 @@
 package edu.cmu.semat;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -11,28 +13,31 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import edu.cmu.semat.entities.Team;
-import edu.cmu.semat.utils.ServerUtils;
+import edu.cmu.semat.utils.HTTPUtils;
 import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class TeamPickerActivity extends ListActivity {
 
-	private ArrayList<Team> teams = null;
+	private static ArrayList<Team> teams = null;	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.team_picker);
 		
-		teams = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		
+		System.out.println("executing alphas background task");
+		new FetchTeamsTask().execute("");
 		
-		if(teams.size() == 1) {
-			moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
-		}
-				
-	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-	            android.R.layout.simple_list_item_1, Team.arrayListToNames(teams));
-		
-		setListAdapter(adapter); 			
+//		teams = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		
+//		
+//		if(teams.size() == 1) {
+//			moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
+//		}
+//				
+//	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//	            android.R.layout.simple_list_item_1, Team.arrayListToNames(teams));
+//		
+//		setListAdapter(adapter); 			
 	}
 
 	/**
@@ -72,5 +77,45 @@ public class TeamPickerActivity extends ListActivity {
 		return true;
 	}
 
+
+	// Uses AsyncTask to create a task away from the main UI thread. This task takes a 
+	// URL string and uses it to create an HttpUrlConnection. Once the connection
+	// has been established, the AsyncTask downloads the contents of the webpage as
+	// an InputStream. Finally, the InputStream is converted into a string, which is
+	// displayed in the UI by the AsyncTask's onPostExecute method.
+	private class FetchTeamsTask extends AsyncTask<String, Void, String> {
+		@Override
+		protected String doInBackground(String... urls) {
+
+			System.out.println("fetching teams from server");
+			// params comes from the execute() call: params[0] is the url.
+			try {
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/users/todd.sedano@sv.cmu.edu/teams.json");
+			} catch (IOException e) {
+				return "Unable to retrieve web page. URL may be invalid.";
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "Unable to retrieve web page. URL may be invalid.";
+			}
+		}
+
+		// onPostExecute displays the results of the AsyncTask.
+		@Override
+		protected void onPostExecute(String result) {
+			System.out.println("Performing team fetch callback");
+			TeamPickerActivity.teams = Team.makeCollectionfromJSONString(result);
+
+//			TeamPickerActivity.teams  = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		
+			
+			if(teams.size() == 1) {
+				moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
+			}
+					
+		    ArrayAdapter<String> adapter = new ArrayAdapter<String>(TeamPickerActivity.this,
+		            android.R.layout.simple_list_item_1, Team.arrayListToNames(TeamPickerActivity.teams));
+			
+			setListAdapter(adapter); 
+		}
+	}
 
 }
