@@ -90,7 +90,9 @@ public class TeamPickerActivity extends ListActivity {
 			System.out.println("fetching teams from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/users/todd.sedano@sv.cmu.edu/teams.json");
+//				String email = SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
+				String email = "todd.sedano@sv.cmu.edu";
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/users/" + email + "/teams.json");
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {

@@ -38,7 +38,7 @@ public class HTTPUtils {
 		public static String sendPost(String url, String data) throws Exception {
 	 
 			URL obj = new URL(url);
-			HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 	 
 			con.setRequestMethod("POST");
 	 
