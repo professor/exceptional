@@ -35,6 +35,7 @@ public class HTTPUtils {
 		}
 	 
 		// HTTP POST request
+		// Data should look like: sn=C02G8416DRJM&cn=&locale=&caller=&num=12345
 		public static String sendPost(String url, String data) throws Exception {
 	 
 			URL obj = new URL(url);
@@ -45,7 +46,8 @@ public class HTTPUtils {
 			// Send post request
 			con.setDoOutput(true);
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeChars(data);
+			wr.writeBytes(data);
+//			wr.writeChars(data);
 			wr.flush();
 			wr.close();
 	 
