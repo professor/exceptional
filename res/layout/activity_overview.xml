@@ -8,7 +8,9 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:numColumns="@integer/index_alpha__num_columns" >
+        android:numColumns="@integer/index_alpha__num_columns"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp" >
     </GridView>
 
 </RelativeLayout>

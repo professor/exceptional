@@ -33,14 +33,17 @@ public class AlphaActivity extends FragmentActivity {
 
 	AlphaCollectionPagerAdapter mAdapter;
 	ViewPager mPager;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_alpha);
 
 		System.out.println("executing alphas background task");
-		new FetchAlphasTask().execute("");
+		Intent intent = getIntent();
+		int index = intent.getIntExtra("index", 0);
+		
+		new FetchAlphasTask(index).execute();
 	}
 
 	@Override
@@ -104,10 +107,6 @@ public class AlphaActivity extends FragmentActivity {
 			super.onCreate(savedInstanceState);
 		}
 
-		/**
-		 * The Fragment's UI is just a simple text view showing its
-		 * instance number.
-		 */
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View v = inflater.inflate(R.layout.fragment_pager_list, container, false);
@@ -161,6 +160,13 @@ public class AlphaActivity extends FragmentActivity {
 	// an InputStream. Finally, the InputStream is converted into a string, which is
 	// displayed in the UI by the AsyncTask's onPostExecute method.
 	private class FetchAlphasTask extends AsyncTask<String, Void, String> {
+		
+		private int index;
+		
+		public FetchAlphasTask(int index){
+			this.index = index;
+		}
+		
 		@Override
 		protected String doInBackground(String... urls) {
 
@@ -182,8 +188,8 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("Performing alpha fetch callback");
 			ArrayList<Alpha> alphas = Alpha.makeCollectionfromJSONString(result);
 
-			setTitle("Alpha 0: " + alphas.get(0).getName());
-			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(0));
+			setTitle("Alpha " + index + ": " + alphas.get(index).getName());
+			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(index));
 
 			mPager = (ViewPager)findViewById(R.id.pager);
 			mPager.setAdapter(mAdapter);
