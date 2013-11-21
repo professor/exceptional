@@ -24,7 +24,6 @@ Authorization: Devise <token>
 ```
 Method: POST /api/v1/users/find_or_register
 Request Body: {
-    deviceId: <guid>, 
     email: "bob.singh@gmail.com"
 }
 Response Body: {
