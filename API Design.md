@@ -32,6 +32,20 @@ Response Body: {
 }
 ```
 
+### Login
+```
+Method: POST /api/v1/sessions
+Request Body: {
+    user: { email: "todd.sedano@sv.cmu.edu" , password: "pAsSwOrD" }
+}
+Response Body: {
+     success: true,
+     info: "Logged in",
+     auth_token: "rAnDomChArAcTerS"
+}
+```
+
+
 ### Fetch the contents of the alphas
 ```
 Method: GET /api/v1/alphas.json
