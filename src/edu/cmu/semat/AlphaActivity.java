@@ -2,6 +2,11 @@ package edu.cmu.semat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +27,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import edu.cmu.semat.entities.Alpha;
@@ -63,12 +69,14 @@ public class AlphaActivity extends FragmentActivity {
 
 	public static class AlphaCollectionPagerAdapter extends FragmentPagerAdapter {
 		private int num_items = 0;
+		private Set<Integer> progress;
 		private Alpha alpha = null;
 
-		public AlphaCollectionPagerAdapter(FragmentManager fm, Alpha alpha) {
+		public AlphaCollectionPagerAdapter(FragmentManager fm, Alpha alpha, Set<Integer> progress) {
 			super(fm);
 			this.num_items = alpha.getCards().size();
 			this.alpha = alpha;
+			this.progress = progress;
 		}
 
 		@Override
@@ -78,23 +86,25 @@ public class AlphaActivity extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			return CardFragment.newInstance(position, alpha.getCards().get(position));
+			return CardFragment.newInstance(position, alpha.getCards().get(position), progress);
 		}
 	}
 
 	public static class CardFragment extends ListFragment {
 		int mNum;
 		Card card;
+		Set<Integer> progress;
 
 		/**
 		 * Create a new instance of CountingFragment, providing "num"
 		 * as an argument.
 		 */
-		static CardFragment newInstance(int num, Card card) {
+		static CardFragment newInstance(int num, Card card, Set<Integer> progress) {
 			CardFragment cardFragment = new CardFragment();
 
 			cardFragment.card = card;
 			cardFragment.mNum = num;
+			cardFragment.progress = progress;
 
 			return cardFragment;
 		}
@@ -118,7 +128,7 @@ public class AlphaActivity extends FragmentActivity {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			setListAdapter(new ChecklistArrayAdapter(getActivity(), R.layout.checklist, card.getChecklists()));
+			setListAdapter(new ChecklistArrayAdapter(getActivity(), R.layout.checklist, card.getChecklists(), progress));
 		}
 
 		@Override
@@ -129,10 +139,12 @@ public class AlphaActivity extends FragmentActivity {
 	
 	private static class ChecklistArrayAdapter extends ArrayAdapter<Checklist> {
 		ArrayList<Checklist> checklists;
+		Set<Integer> progress;
 		
-		public ChecklistArrayAdapter(Context context, int resource, ArrayList<Checklist> objects) {
+		public ChecklistArrayAdapter(Context context, int resource, ArrayList<Checklist> objects, Set<Integer> progress) {
 			super(context, resource, objects);
 			checklists = objects;
+			this.progress = progress;
 		}
 		
 		public int getCount (){
@@ -147,18 +159,13 @@ public class AlphaActivity extends FragmentActivity {
 				
 			TextView checkboxText = (TextView) convertView.findViewById(R.id.textView1);
 			checkboxText.setText("" + checklists.get(position).getName());
+			CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
+			cb.setChecked(progress.contains(checklists.get(position).getId()));
 			return convertView;
 		}
 
 	}
 
-
-
-	// Uses AsyncTask to create a task away from the main UI thread. This task takes a 
-	// URL string and uses it to create an HttpUrlConnection. Once the connection
-	// has been established, the AsyncTask downloads the contents of the webpage as
-	// an InputStream. Finally, the InputStream is converted into a string, which is
-	// displayed in the UI by the AsyncTask's onPostExecute method.
 	private class FetchAlphasTask extends AsyncTask<String, Void, String> {
 		
 		private int index;
@@ -187,9 +194,51 @@ public class AlphaActivity extends FragmentActivity {
 		protected void onPostExecute(String result) {
 			System.out.println("Performing alpha fetch callback");
 			ArrayList<Alpha> alphas = Alpha.makeCollectionfromJSONString(result);
+			new FetchProgressTask(1, index, alphas).execute();
+		}
+	}
+	
+	private class FetchProgressTask extends AsyncTask<String, Void, String> {
+		
+		private int teamId;
+		private int index;
+		private ArrayList<Alpha> alphas;
+		
+		public FetchProgressTask(int teamId, int index, ArrayList<Alpha> alphas){
+			this.teamId = teamId;
+			this.index = index;
+			this.alphas = alphas;
+		}
+		
+		@Override
+		protected String doInBackground(String... urls) {
 
+			System.out.println("fetching progress from server");
+			// params comes from the execute() call: params[0] is the url.
+			try {
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + this.teamId + ".json");
+			} catch (IOException e) {
+				return "Unable to retrieve web page. URL may be invalid.";
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "Unable to retrieve web page. URL may be invalid.";
+			}
+		}
+
+		// onPostExecute displays the results of the AsyncTask.
+		@Override
+		protected void onPostExecute(String result) {
+			System.out.println("Performing alpha fetch callback");
+
+			JSONObject r = new JSONObject(result);
+			JSONArray p = (JSONArray) r.get("checkboxes");
+			HashSet<Integer> progress = new HashSet<Integer>();
+			for(int i=0; i < p.length(); i++){
+				progress.add(p.getInt(i));
+			}
+			
 			setTitle("Alpha " + index + ": " + alphas.get(index).getName());
-			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(index));
+			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(index), progress);
 
 			mPager = (ViewPager)findViewById(R.id.pager);
 			mPager.setAdapter(mAdapter);
@@ -209,7 +258,6 @@ public class AlphaActivity extends FragmentActivity {
 					mPager.setCurrentItem(mAdapter.getCount()-1);
 				}
 			});
-
 		}
 	}
 }
