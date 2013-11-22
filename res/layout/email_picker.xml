@@ -1,0 +1,29 @@
+<!-- Source: https://github.com/manishsri01/GoogleProfileDemo and http://www.javacodegeeks.com/2013/10/google-account-integration-in-android-login-with-gmail.html -->
+
+<!-- attributes will be renamed once we integrate with the Java code -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashActivity" >
+
+    <ListView       
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="44dp" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/loginTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@android:id/list"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="26dp"
+        android:text="@string/login_text_view" />
+
+</RelativeLayout>

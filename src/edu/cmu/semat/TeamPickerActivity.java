@@ -7,6 +7,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,8 @@ import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class TeamPickerActivity extends ListActivity {
 
+	private static final String TAG = "TeamPickerActivity";
+	
 	private static ArrayList<Team> teams = null;	
 	
 	@Override
@@ -25,7 +28,7 @@ public class TeamPickerActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.team_picker);
 		
-		System.out.println("executing alphas background task");
+		Log.v(TAG, "onCreate()");
 		new FetchTeamsTask().execute("");
 		
 //		teams = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		
@@ -60,7 +63,7 @@ public class TeamPickerActivity extends ListActivity {
 	}
 	
 	private void moveToNextIntent(int selectedTeamId, String selectedTeamName) {
-		System.out.println("TeamActivity: selected team: " + selectedTeamName + " (" + selectedTeamId + ")");
+		Log.v(TAG, "TeamActivity: selected team: " + selectedTeamName + " (" + selectedTeamId + ")");
 		SharedPreferencesUtil.setCurrentTeamId(this, selectedTeamId);
 		SharedPreferencesUtil.setCurrentTeamName(this, selectedTeamName);
 		
@@ -87,7 +90,7 @@ public class TeamPickerActivity extends ListActivity {
 		@Override
 		protected String doInBackground(String... urls) {
 
-			System.out.println("fetching teams from server");
+			Log.v(TAG, "fetching teams from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
 //				String email = SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
@@ -104,7 +107,7 @@ public class TeamPickerActivity extends ListActivity {
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(String result) {
-			System.out.println("Performing team fetch callback");
+			Log.v(TAG, "Performing team fetch callback");
 			TeamPickerActivity.teams = Team.makeCollectionfromJSONString(result);
 
 //			TeamPickerActivity.teams  = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		

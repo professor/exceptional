@@ -37,8 +37,8 @@
                 android:value="edu.cmu.semat.MainActivity" />
         </activity>
         <activity
-            android:name="edu.cmu.semat.LoginActivity"
-            android:label="@string/login_activity_display_message"
+            android:name="edu.cmu.semat.EmailPickerActivity"
+            android:label="@string/title_activity_email_picker"
             android:parentActivityName="edu.cmu.semat.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -52,6 +52,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.cmu.semat.MainActivity" />
         </activity>
+        <activity
+            android:name="edu.cmu.semat.WaitForRegistrationEmailActivity"
+            android:label="@string/title_activity_wait_for_registration" >
+        </activity>        
+        <activity
+            android:name="edu.cmu.semat.LoginActivity"
+            android:label="@string/title_activity_login" >
+        </activity>        
         <activity
             android:name="edu.cmu.semat.AlphaActivity"
             android:label="@string/title_activity_alpha" >

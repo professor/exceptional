@@ -8,10 +8,15 @@
     <string name="current_state">Summary of current state</string>
     <string name="next_actions">Next action</string>
     <string name="introduction_activity_display_message">Introduction</string>
-    <string name="login_activity_display_message">Login</string>
+    <string name="title_activity_email_picker">Login</string>
+    <string name="title_activity_wait_for_registration">Login</string>
+    <string name="title_activity_login">Login</string>
     <string name="title_activity_team_picker">Choose a Team</string>
     <string name="login_text_view">Please select a user account</string>
+    <string name="password_text_view">Please enter your password</string>
+    <string name="wait_for_registration_email">Please check your email account for an invitation email. \n \n You must first create an account on the website prior to using this application</string>
     <string name="title_activity_alpha">AlphaActivity</string>
     <string name="title_activity_overview">OverviewActivity</string>
+    <string name="password_button">Ok</string>
 
 </resources>

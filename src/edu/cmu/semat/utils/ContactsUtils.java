@@ -6,9 +6,12 @@ import java.util.regex.Pattern;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.util.Log;
 import android.util.Patterns;
 
 public class ContactsUtils {
+	
+	private static final String TAG = "ContactsUtilActivity";	
 
 	public static ArrayList<String> userEmailAddresses(Context context) {
 		ArrayList<String> list = new ArrayList<String>();
@@ -18,7 +21,7 @@ public class ContactsUtils {
 		for (Account account : accounts) {
 		    if (emailPattern.matcher(account.name).matches()) {
 		        String possibleEmail = account.name;
-		        System.out.println(possibleEmail);
+//		        Log.v(TAG, possibleEmail);
 		        list.add(possibleEmail);
 		    }
 		}

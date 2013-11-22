@@ -3,11 +3,14 @@ package edu.cmu.semat;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class MainActivity extends Activity {
 
+	private static final String TAG = "MainActivity";
+	
 //	@Override
 //	protected void onCreate(Bundle savedInstanceState) {
 //		super.onCreate(savedInstanceState);
@@ -26,13 +29,13 @@ public class MainActivity extends Activity {
 //		SharedPreferencesUtil.setSplashScreenSeenByUser(this, false);
 				
 		if(!SharedPreferencesUtil.getSplashScreenSeenByUser(this)) {
-			 System.out.println("introductionActivity");			
+			 Log.v(TAG, "Intent: introductionActivity");			
 			  Intent intent = new Intent(this, IntroductionActivity.class);
 			  startActivity(intent);
 			
 		} else {
-			 System.out.println("loginActivity");			
-			  Intent intent = new Intent(this, LoginActivity.class);
+			 Log.v(TAG, "Intent: emailPickerActivity");			
+			  Intent intent = new Intent(this, EmailPickerActivity.class);
 			  startActivity(intent);
 		}
 		

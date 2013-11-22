@@ -5,10 +5,10 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/introductionTextView"
+        android:id="@+id/waitForRegistrationEmailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp"        
-        android:text="@string/introduction" />
+        android:padding="20dp"
+        android:text="@string/wait_for_registration_email" />
 
 </LinearLayout>
