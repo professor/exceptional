@@ -8,6 +8,15 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+
+import android.util.Log;
+
 // source http://www.mkyong.com/java/how-to-send-http-request-getpost-in-java/
 
 public class HTTPUtils {
@@ -64,4 +73,24 @@ public class HTTPUtils {
 	 
 			return response.toString();
 		}
+		
+			
+		public static JSONObject sendPost(String url, JSONObject holder) throws Exception {
+
+			HttpPost post = new HttpPost(url);
+			DefaultHttpClient client = new DefaultHttpClient();
+			String response = null;
+			JSONObject json = new JSONObject();
+
+			StringEntity se = new StringEntity(holder.toString());
+			post.setEntity(se);
+
+			// setup the request headers
+			post.setHeader("Accept", "application/json");
+			post.setHeader("Content-Type", "application/json");
+
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+			response = client.execute(post, responseHandler);
+			return (new JSONObject(response));
+		}		
 }

@@ -3,11 +3,14 @@ package edu.cmu.semat;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
 import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class IntroductionActivity extends Activity {
+	
+	private static final String TAG = "IntroductionActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +21,7 @@ public class IntroductionActivity extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		System.out.println("onTouch 2");
+		Log.v(TAG, "onTouch()");
 		SharedPreferencesUtil.setSplashScreenSeenByUser(this, true);
 
 		Intent intent = new Intent(this, MainActivity.class);

@@ -11,44 +11,23 @@ public class MainActivity extends Activity {
 
 	private static final String TAG = "MainActivity";
 	
-//	@Override
-//	protected void onCreate(Bundle savedInstanceState) {
-//		super.onCreate(savedInstanceState);
-//		
-//		Intent intent = new Intent(this, TeamPickerActivity.class);
-//		startActivity(intent);	
-//		return;
-//	}
-//	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		//Just for debugging
-//		SharedPreferencesUtil.setSplashScreenSeenByUser(this, false);
-				
 		if(!SharedPreferencesUtil.getSplashScreenSeenByUser(this)) {
-			 Log.v(TAG, "Intent: introductionActivity");			
+			 Log.v(TAG, "Go to intent: introductionActivity");			
 			  Intent intent = new Intent(this, IntroductionActivity.class);
 			  startActivity(intent);
 			
 		} else {
-			 Log.v(TAG, "Intent: emailPickerActivity");			
+			 Log.v(TAG, "Go to intent: emailPickerActivity");			
 			  Intent intent = new Intent(this, EmailPickerActivity.class);
 			  startActivity(intent);
 		}
 		
 	}
 
-//	   @Override
-//	   protected void onSaveInstanceState(Bundle outState)
-//	   {
-//	      super.onSaveInstanceState(outState);
-////	      
-////	      outState.putDouble(BILL_TOTAL, currentBillTotal);
-////	      outState.putInt(CUSTOM_PERCENT, currentCustomPercent);
-//	   } 	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

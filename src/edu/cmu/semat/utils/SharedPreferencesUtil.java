@@ -13,6 +13,7 @@ public class SharedPreferencesUtil {
 	private static String teamIdKey = "edu.cmu.semat.team_id_key";
 	private static String teamNameKey = "edu.cmu.semat.team_name_key";
 	private static String emailKey = "edu.cmu.semat.email_key";
+	private static String authTokenKey = "edu.cmu.semat.auth_token_key";
 
 
 	public static void setCurrentTeamId(Activity activity, int teamId) {
@@ -45,10 +46,16 @@ public class SharedPreferencesUtil {
 	
 	public static boolean getSplashScreenSeenByUser(Activity activity) {
 		return getBoolean(activity, splashKey, false);
-
 	}
 	
-	
+	public static void setAuthToken(Activity activity, String authToken) {
+		setString(activity, authTokenKey, authToken);		
+	}		
+
+	public static void getAuthToken(Activity activity, String defaultAuthToken) {
+		setString(activity, authTokenKey, defaultAuthToken);		
+	}		
+
 	
 	private static void setString(Activity activity, String key, String value) {
 		SharedPreferences prefs = activity.getSharedPreferences(
@@ -87,7 +94,9 @@ public class SharedPreferencesUtil {
 				preferenceFile, Context.MODE_PRIVATE);
 		boolean value = prefs.getBoolean(key, defaultValue);  
 		return value;
-	}		
+	}
+
+	
 	
 	
 	
