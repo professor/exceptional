@@ -1,32 +1,32 @@
 <!-- Source: https://github.com/manishsri01/GoogleProfileDemo and http://www.javacodegeeks.com/2013/10/google-account-integration-in-android-login-with-gmail.html -->
 
+
 <!-- attributes will be renamed once we integrate with the Java code -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
     tools:context=".SplashActivity" >
-
-
 
     <TextView
         android:id="@+id/loginTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@android:id/list"
         android:layout_alignParentTop="true"
         android:layout_marginTop="26dp"
+        android:gravity="center"
+        android:textSize="20sp"
         android:text="@string/password_text_view" />
 
     <EditText
         android:id="@+id/passwordEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/loginTextView"
-        android:layout_marginLeft="25dp"
         android:layout_marginTop="20dp"
-        android:ems="10"
+        android:gravity="center"
         android:inputType="textPassword" >
 
         <requestFocus />
@@ -34,13 +34,11 @@
 
     <Button
         android:id="@+id/passwordButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/passwordEditText"
-        android:layout_below="@+id/passwordEditText"
-        android:layout_marginLeft="17dp"
-        android:layout_marginTop="17dp"
-        android:onClick="sendPassword"        
+        android:layout_alignParentBottom="true"
+        android:onClick="sendPassword"
         android:text="@string/password_button" />
 
 </RelativeLayout>

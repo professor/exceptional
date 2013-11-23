@@ -2,6 +2,7 @@ package edu.cmu.semat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +40,8 @@ public class AlphaActivity extends FragmentActivity {
 
 	AlphaCollectionPagerAdapter mAdapter;
 	ViewPager mPager;
-	
+	int index;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,9 +49,9 @@ public class AlphaActivity extends FragmentActivity {
 
 		System.out.println("executing alphas background task");
 		Intent intent = getIntent();
-		int index = intent.getIntExtra("index", 0);
-		
-		new FetchAlphasTask(index).execute();
+		index = intent.getIntExtra("index", 0);
+
+		new FetchAlphasTask().execute();
 	}
 
 	@Override
@@ -136,27 +138,27 @@ public class AlphaActivity extends FragmentActivity {
 			Log.i("FragmentList", "Item clicked: " + id);
 		}
 	}
-	
+
 	private static class ChecklistArrayAdapter extends ArrayAdapter<Checklist> {
 		ArrayList<Checklist> checklists;
 		Set<Integer> progress;
-		
+
 		public ChecklistArrayAdapter(Context context, int resource, ArrayList<Checklist> objects, Set<Integer> progress) {
 			super(context, resource, objects);
 			checklists = objects;
 			this.progress = progress;
 		}
-		
+
 		public int getCount (){
 			return checklists.size();
 		}
-		
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null){
 				convertView = View.inflate (getContext(), R.layout.checklist, null);
 			}
-				
+
 			TextView checkboxText = (TextView) convertView.findViewById(R.id.textView1);
 			checkboxText.setText("" + checklists.get(position).getName());
 			CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
@@ -167,20 +169,48 @@ public class AlphaActivity extends FragmentActivity {
 	}
 
 	private class FetchAlphasTask extends AsyncTask<String, Void, String> {
-		
+
 		private int index;
-		
-		public FetchAlphasTask(int index){
-			this.index = index;
+
+		@Override
+		protected String doInBackground(String... urls) {
+
+			if(! ((MyApplication) getApplication()).containsKey("alphas")){
+				System.out.println("fetching alphas from server");
+				// params comes from the execute() call: params[0] is the url.
+				try {
+					return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/alphas.json");
+				} catch (IOException e) {
+					return "Unable to retrieve web page. URL may be invalid.";
+				} catch (Exception e) {
+					e.printStackTrace();
+					return "Unable to retrieve web page. URL may be invalid.";
+				}
+			}
+			return null;
 		}
-		
+
+		// onPostExecute displays the results of the AsyncTask.
+		@Override
+		protected void onPostExecute(String result) {
+			if(result != null){
+				System.out.println("Performing alpha fetch callback");
+				ArrayList<Alpha> alphas = Alpha.makeCollectionfromJSONString(result);
+				((MyApplication) getApplication()).set("alphas", alphas);
+			}
+			new FetchCurrentAlphaStateTask().execute();
+		}
+	}
+
+	private class FetchCurrentAlphaStateTask extends AsyncTask<String, Void, String> {
+
 		@Override
 		protected String doInBackground(String... urls) {
 
 			System.out.println("fetching alphas from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/alphas.json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/1/current_alpha_states.json");
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -192,31 +222,28 @@ public class AlphaActivity extends FragmentActivity {
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(String result) {
-			System.out.println("Performing alpha fetch callback");
-			ArrayList<Alpha> alphas = Alpha.makeCollectionfromJSONString(result);
-			new FetchProgressTask(1, index, alphas).execute();
+			JSONObject r = new JSONObject(result);
+			JSONObject s = (JSONObject) r.get("current_alpha_states");
+			HashMap<Integer, Integer> currentAlphaStates = new HashMap<Integer, Integer>();
+			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
+			for(int alpha = 1; alpha <= alphas.size(); alpha++){
+				int card = s.getInt(Integer.toString(alpha));
+				currentAlphaStates.put(alpha-1, card);
+			}
+			((MyApplication) getApplication()).set("currentAlphaStates", currentAlphaStates);
+			new FetchProgressTask().execute();
 		}
 	}
-	
+
 	private class FetchProgressTask extends AsyncTask<String, Void, String> {
-		
-		private int teamId;
-		private int index;
-		private ArrayList<Alpha> alphas;
-		
-		public FetchProgressTask(int teamId, int index, ArrayList<Alpha> alphas){
-			this.teamId = teamId;
-			this.index = index;
-			this.alphas = alphas;
-		}
-		
+
 		@Override
 		protected String doInBackground(String... urls) {
 
 			System.out.println("fetching progress from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + this.teamId + ".json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/1.json");
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -236,13 +263,17 @@ public class AlphaActivity extends FragmentActivity {
 			for(int i=0; i < p.length(); i++){
 				progress.add(p.getInt(i));
 			}
-			
+			((MyApplication) getApplication()).set("progress", progress);
+
+			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
 			setTitle("Alpha " + index + ": " + alphas.get(index).getName());
 			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(index), progress);
 
 			mPager = (ViewPager)findViewById(R.id.pager);
 			mPager.setAdapter(mAdapter);
 
+			HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) ((MyApplication) getApplication()).get("currentAlphaStates");
+			mPager.setCurrentItem(currentAlphaStates.get(index) - 1);
 
 			// Watch for button clicks.
 			Button button = (Button)findViewById(R.id.goto_first);
@@ -251,7 +282,7 @@ public class AlphaActivity extends FragmentActivity {
 					mPager.setCurrentItem(0);
 				}
 			});
-			
+
 			button = (Button)findViewById(R.id.goto_last);
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
