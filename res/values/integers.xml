@@ -2,4 +2,5 @@
 
     <!-- Integers for the index_alpha layout -->
     <integer name="index_alpha__num_columns">2</integer>
+    <integer name="checklist_id_tag">0</integer>
 </resources>

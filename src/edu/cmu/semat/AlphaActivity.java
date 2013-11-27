@@ -29,22 +29,28 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.cmu.semat.entities.Alpha;
 import edu.cmu.semat.entities.Card;
 import edu.cmu.semat.entities.Checklist;
 import edu.cmu.semat.utils.HTTPUtils;
+import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class AlphaActivity extends FragmentActivity {
 
 	AlphaCollectionPagerAdapter mAdapter;
 	ViewPager mPager;
 	int index;
+	static int teamId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		teamId = SharedPreferencesUtil.getCurrentTeamId(getParent(), 1);
 		setContentView(R.layout.activity_alpha);
 
 		System.out.println("executing alphas background task");
@@ -163,6 +169,22 @@ public class AlphaActivity extends FragmentActivity {
 			checkboxText.setText("" + checklists.get(position).getName());
 			CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
 			cb.setChecked(progress.contains(checklists.get(position).getId()));
+			cb.setTag(R.integer.checklist_id_tag, checklists.get(position).getId());
+			cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					int checklist_id = (Integer) buttonView.getTag(R.integer.checklist_id_tag);
+					String data = String.format("checklist_id=%d&checked=%s&team_id=%d", checklist_id, isChecked, teamId);
+					System.out.println(data);
+//					try {
+//						HTTPUtils.sendPost("http://semat.herokuapp.com/api/v1/progress", data);
+//					} catch (Exception e) {
+//						Toast.makeText(getContext(), "Uploading progress failed!", Toast.LENGTH_LONG).show();
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+				}
+			});
 			return convertView;
 		}
 
@@ -210,7 +232,7 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("fetching alphas from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/1/current_alpha_states.json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json");
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -243,7 +265,7 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("fetching progress from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/1.json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json");
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {

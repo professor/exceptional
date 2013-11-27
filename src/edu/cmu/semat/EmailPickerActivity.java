@@ -2,6 +2,8 @@ package edu.cmu.semat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -13,7 +15,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import edu.cmu.semat.entities.Team;
 import edu.cmu.semat.utils.ContactsUtils;
 import edu.cmu.semat.utils.HTTPUtils;
 import edu.cmu.semat.utils.SharedPreferencesUtil;
@@ -27,7 +28,8 @@ public class EmailPickerActivity extends ListActivity {
 		Log.v(TAG, "onCreate()");			
 		super.onCreate(savedInstanceState);
 	
-		ArrayList<String> emails = ContactsUtils.userEmailAddresses(this);
+		Set<String> emails_set = new HashSet<String>(ContactsUtils.userEmailAddresses(this));
+		ArrayList<String> emails = new ArrayList<String>(emails_set);
 //		ArrayList<String> emails = ContactsUtils.userEmailAddressesTEST(this);
 			
 		if(emails.size() == 1) {
