@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.http.client.HttpResponseException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.savagelook.android.UrlJsonAsyncTask;
 
 import android.app.Activity;
 import android.content.Context;
@@ -54,7 +57,6 @@ public class AlphaActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		teamId = SharedPreferencesUtil.getCurrentTeamId(getParent(), 1);
 		teamId = SharedPreferencesUtil.getCurrentTeamId(this, 1);
 		setContentView(R.layout.activity_alpha);
 
@@ -153,9 +155,11 @@ public class AlphaActivity extends FragmentActivity {
 	private static class ChecklistArrayAdapter extends ArrayAdapter<Checklist> {
 		ArrayList<Checklist> checklists;
 		Set<Integer> progress;
+		Context context;
 
 		public ChecklistArrayAdapter(Context context, int resource, ArrayList<Checklist> objects, Set<Integer> progress) {
 			super(context, resource, objects);
+			this.context = context;
 			checklists = objects;
 			this.progress = progress;
 		}
@@ -179,40 +183,7 @@ public class AlphaActivity extends FragmentActivity {
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					int checklist_id = (Integer) buttonView.getTag(R.integer.checklist_id_tag);
-					String data = String.format("checklist_id=%d&checked=%s&team_id=%d", checklist_id, isChecked, teamId);
-					System.out.println(data);
-					
-// This needs to be in it's own UrlJsonAsyncTask, like LoginActivity					
-//					try {
-//						JSONObject json = new JSONObject();			
-//						JSONObject holder = new JSONObject();
-//						
-//
-//						holder.put("checklist_id",  checklist_id);
-//						holder.put("checked", isChecked);
-//						holder.put("team_id", teamId);
-//						holder.put("auth_token", SharedPreferencesUtil.getAuthToken((Activity)getContext(), ""));
-//						
-//						Log.v(TAG, holder.toString());
-//
-//						json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress", holder);
-//					} catch (JSONException e) {
-//						Toast.makeText(getContext(), "Uploading progress failed!" + e.getMessage(), Toast.LENGTH_LONG).show();						
-//						e.printStackTrace();
-//					} catch (Exception e) {
-//						Toast.makeText(getContext(), "Uploading progress failed!" + e.getMessage(), Toast.LENGTH_LONG).show();						
-//						e.printStackTrace();
-//					}					
-					
-					
-					
-//					try {
-//						HTTPUtils.sendPost("http://semat.herokuapp.com/api/v1/progress", data);
-//					} catch (Exception e) {
-//						Toast.makeText(getContext(), "Uploading progress failed!", Toast.LENGTH_LONG).show();
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
+					new SendProgressTask(context, checklist_id, isChecked).execute();
 				}
 			});
 			return convertView;
@@ -341,6 +312,55 @@ public class AlphaActivity extends FragmentActivity {
 					mPager.setCurrentItem(mAdapter.getCount()-1);
 				}
 			});
+		}
+	}
+
+	// Uses AsyncTask to create a task away from the main UI thread.
+	private static class SendProgressTask extends UrlJsonAsyncTask {
+		private int checklist_id;
+		private boolean isChecked;
+		private String exceptionMessage;
+
+		public SendProgressTask(Context context, int checklist_id, boolean isChecked) {
+			super(context);
+			this.checklist_id = checklist_id;
+			this.isChecked = isChecked;
+		}
+
+		@Override
+		protected JSONObject doInBackground(String... urls) {
+			JSONObject json = new JSONObject();			
+			try {
+				JSONObject holder = new JSONObject();
+
+				holder.put("checklist_id",  checklist_id);
+				holder.put("checked", isChecked);
+				holder.put("team_id", teamId);
+				holder.put("auth_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
+
+				Log.v(TAG, holder.toString());
+
+				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress", holder);
+			} catch (JSONException e) {
+				exceptionMessage = e.getMessage();
+				e.printStackTrace();
+				return null;
+			} catch (Exception e) {
+				exceptionMessage = e.getMessage();
+				e.printStackTrace();
+				return null;
+			}			
+			return json;
+		}
+
+		// onPostExecute displays the results of the AsyncTask.
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			if(json != null)
+				Toast.makeText(context, "Synced with server", Toast.LENGTH_LONG).show();
+			else{
+				Toast.makeText(context, "Uploading progress failed! " + exceptionMessage, Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 }
