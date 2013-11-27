@@ -52,8 +52,8 @@ public class SharedPreferencesUtil {
 		setString(activity, authTokenKey, authToken);		
 	}		
 
-	public static void getAuthToken(Activity activity, String defaultAuthToken) {
-		setString(activity, authTokenKey, defaultAuthToken);		
+	public static String getAuthToken(Activity activity, String defaultAuthToken) {
+		return getString(activity, authTokenKey, defaultAuthToken);		
 	}		
 
 	

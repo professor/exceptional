@@ -7,8 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -42,6 +44,8 @@ import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class AlphaActivity extends FragmentActivity {
 
+	private static final String TAG = "AlphaActivity";
+
 	AlphaCollectionPagerAdapter mAdapter;
 	ViewPager mPager;
 	int index;
@@ -50,7 +54,8 @@ public class AlphaActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		teamId = SharedPreferencesUtil.getCurrentTeamId(getParent(), 1);
+//		teamId = SharedPreferencesUtil.getCurrentTeamId(getParent(), 1);
+		teamId = SharedPreferencesUtil.getCurrentTeamId(this, 1);
 		setContentView(R.layout.activity_alpha);
 
 		System.out.println("executing alphas background task");
@@ -176,6 +181,31 @@ public class AlphaActivity extends FragmentActivity {
 					int checklist_id = (Integer) buttonView.getTag(R.integer.checklist_id_tag);
 					String data = String.format("checklist_id=%d&checked=%s&team_id=%d", checklist_id, isChecked, teamId);
 					System.out.println(data);
+					
+// This needs to be in it's own UrlJsonAsyncTask, like LoginActivity					
+//					try {
+//						JSONObject json = new JSONObject();			
+//						JSONObject holder = new JSONObject();
+//						
+//
+//						holder.put("checklist_id",  checklist_id);
+//						holder.put("checked", isChecked);
+//						holder.put("team_id", teamId);
+//						holder.put("auth_token", SharedPreferencesUtil.getAuthToken((Activity)getContext(), ""));
+//						
+//						Log.v(TAG, holder.toString());
+//
+//						json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress", holder);
+//					} catch (JSONException e) {
+//						Toast.makeText(getContext(), "Uploading progress failed!" + e.getMessage(), Toast.LENGTH_LONG).show();						
+//						e.printStackTrace();
+//					} catch (Exception e) {
+//						Toast.makeText(getContext(), "Uploading progress failed!" + e.getMessage(), Toast.LENGTH_LONG).show();						
+//						e.printStackTrace();
+//					}					
+					
+					
+					
 //					try {
 //						HTTPUtils.sendPost("http://semat.herokuapp.com/api/v1/progress", data);
 //					} catch (Exception e) {

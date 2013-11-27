@@ -69,6 +69,7 @@ public class TeamPickerActivity extends ListActivity {
 		SharedPreferencesUtil.setCurrentTeamName(this, selectedTeamName);
 		
 		Intent intent = new Intent(this, AlphaActivity.class);
+		
 		startActivity(intent);			
 	}
 	
