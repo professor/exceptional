@@ -33,6 +33,7 @@ public class TeamPickerActivity extends ListActivity {
 		
 //		teams = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		
 //		
+//      Removing this for demo, we want this screen to be displayed		
 //		if(teams.size() == 1) {
 //			moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
 //		}

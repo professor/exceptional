@@ -31,10 +31,11 @@ public class EmailPickerActivity extends ListActivity {
 		Set<String> emails_set = new HashSet<String>(ContactsUtils.userEmailAddresses(this));
 		ArrayList<String> emails = new ArrayList<String>(emails_set);
 //		ArrayList<String> emails = ContactsUtils.userEmailAddressesTEST(this);
-			
-		if(emails.size() == 1) {
-			moveToNextIntent(emails.get(0));
-		}
+
+//      Removing this for demo, we want this screen to be displayed		
+//		if(emails.size() == 1) {
+//			moveToNextIntent(emails.get(0));
+//		}
 		
 		setContentView(R.layout.email_picker);
 
