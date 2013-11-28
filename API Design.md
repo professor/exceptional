@@ -20,6 +20,15 @@ When authentication is required, also include the auth token:
 Authorization: Devise <token>
 ```
 
+### Test Get / Test Post
+```
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X GET http://localhost:3000/api/v1/test/get -d "{\"input\":\"hello\"}"
+
+
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/test/post.json -d "{\"input\":\"hello\"}"
+```
+
+
 ### Registration
 ```
 Method: POST /api/v1/users/find_or_register
@@ -40,8 +49,10 @@ Request Body: {
 Response Body: {
      success: true,
      info: "Logged in",
-     auth_token: "rAnDomChArAcTerS"
+     user_token: "rAnDomChArAcTerS"
 }
+Example:
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/sessions -d "{\"user\":{\"email\":\"todd.sedano@sv.cmu.edu\",\"password\":\"pAsSwOrD\"}}"
 ```
 
 
@@ -108,29 +119,46 @@ Response Body: {
 
 ### Upload the checkbox modifications
 ```
-Method: POST /api/v1/progress
+Method: POST /api/v1/progress<teamId>/save_notes.json
 Request Body: {
     currentVersion: 2,  #Not sure about this
     checklist_id: <guid>
     checked: true 
-    team_id: <teamId>
-    user_id: <userId>
+    user_email: <userId>
+    user_token:
 }
 Response Body: {
     response: true 
 }
+Example: 
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/progress/1/.json -d "{\"checklist_id\":3, \"team_id\":1, \"checked\":true, \"user_email\":\"todd.sedano@sv.cmu.edu\", \"user_token\":\"tOkEn\"}"
 ```
 _response will contain a message if it failed_
 
 ### Upload comments for synchronization
 ```
-Method: POST /comments/<groupId>/<cardId>
+Method: POST /api/v1/progress/<teamId>/save_notes
 Request Body: {
-    alphaId: <guid>,
-    comment: "The professor says that we don't have enough exceptions in our code"
+    alpha_id: <guid>,
+    notes: "The professor says that we don't have enough exceptions in our code",
+    user_email: <email>,
+    user_token: <token>
 }
 Response Body: {
-    forceUpdate: false
+    response: true
+}
+```
+
+```
+Method: POST /api/v1/progress/<teamId>/save_actions
+Request Body: {
+    alpha_id: <guid>,
+    actions: "The professor says that we don't have enough exceptions in our code",
+    user_email: <email>,
+    user_token: <token>
+}
+Response Body: {
+    response: true
 }
 ```
 
