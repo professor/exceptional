@@ -20,6 +20,15 @@ When authentication is required, also include the auth token:
 Authorization: Devise <token>
 ```
 
+### Test Get / Test Post
+```
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X GET http://localhost:3000/api/v1/test/get -d "{\"input\":\"hello\"}"
+
+
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/test/post.json -d "{\"input\":\"hello\"}"
+```
+
+
 ### Registration
 ```
 Method: POST /api/v1/users/find_or_register
@@ -42,6 +51,8 @@ Response Body: {
      info: "Logged in",
      auth_token: "rAnDomChArAcTerS"
 }
+Example:
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/sessions -d "{\"user\":{\"email\":\"todd.sedano@sv.cmu.edu\",\"password\":\"pAsSwOrD\"}}"
 ```
 
 
