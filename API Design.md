@@ -119,12 +119,11 @@ Response Body: {
 
 ### Upload the checkbox modifications
 ```
-Method: POST /api/v1/progress
+Method: POST /api/v1/progress<teamId>/save_notes.json
 Request Body: {
     currentVersion: 2,  #Not sure about this
     checklist_id: <guid>
     checked: true 
-    team_id: <teamId>
     user_email: <userId>
     user_token:
 }
@@ -132,7 +131,7 @@ Response Body: {
     response: true 
 }
 Example: 
-curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/progress.json -d "{\"checklist_id\":3, \"team_id\":1, \"checked\":true, \"user_email\":\"todd.sedano@sv.cmu.edu\", \"user_token\":\"tOkEn\"}"
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/progress/1/.json -d "{\"checklist_id\":3, \"team_id\":1, \"checked\":true, \"user_email\":\"todd.sedano@sv.cmu.edu\", \"user_token\":\"tOkEn\"}"
 ```
 _response will contain a message if it failed_
 
