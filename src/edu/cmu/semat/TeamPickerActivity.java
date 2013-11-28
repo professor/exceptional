@@ -3,6 +3,7 @@ package edu.cmu.semat;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -95,9 +96,11 @@ public class TeamPickerActivity extends ListActivity {
 			Log.v(TAG, "fetching teams from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-//				String email = SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
-				String email = "todd.sedano@sv.cmu.edu";
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/users/" + email + "/teams.json");
+				String email = SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
+				String data = "?user_token=" + SharedPreferencesUtil.getAuthToken(TeamPickerActivity.this, "") + 
+				              "&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
+
+				return HTTPUtils.sendGet("https://semat.herokuapp.com/api/v1/users/" + email + "/teams.json" + data);
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {

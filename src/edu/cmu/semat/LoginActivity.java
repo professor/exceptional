@@ -112,7 +112,7 @@ public class LoginActivity extends Activity {
 					Log.v(TAG, "Login Successful");
 
 					// everything is ok
-					SharedPreferencesUtil.setAuthToken(LoginActivity.this, json.getString("auth_token"));
+					SharedPreferencesUtil.setAuthToken(LoginActivity.this, json.getString("user_token"));
 
 					Intent intent = new Intent(LoginActivity.this, TeamPickerActivity.class);
 					startActivity(intent);

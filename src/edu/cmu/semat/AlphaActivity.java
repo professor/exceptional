@@ -325,6 +325,7 @@ public class AlphaActivity extends FragmentActivity {
 			super(context);
 			this.checklist_id = checklist_id;
 			this.isChecked = isChecked;
+			this.setMessageLoading("Updating server");
 		}
 
 		@Override
@@ -336,7 +337,8 @@ public class AlphaActivity extends FragmentActivity {
 				holder.put("checklist_id",  checklist_id);
 				holder.put("checked", isChecked);
 				holder.put("team_id", teamId);
-				holder.put("auth_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
+				holder.put("user_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
+				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
 
 				Log.v(TAG, holder.toString());
 
@@ -356,11 +358,17 @@ public class AlphaActivity extends FragmentActivity {
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(JSONObject json) {
-			if(json != null)
+			Log.v(TAG, "SendProgressTask onPostExecute()");
+			Log.v(TAG, json.toString());
+			
+			if (json.getBoolean("response")) {
+				Log.v(TAG, "Synced with server");
 				Toast.makeText(context, "Synced with server", Toast.LENGTH_LONG).show();
-			else{
+			} else {
+				Log.v(TAG, "Uploading progress failed! " + exceptionMessage );
 				Toast.makeText(context, "Uploading progress failed! " + exceptionMessage, Toast.LENGTH_LONG).show();
 			}
+			super.onPostExecute(json);
 		}
 	}
 }
