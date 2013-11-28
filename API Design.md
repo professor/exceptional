@@ -130,6 +130,8 @@ Request Body: {
 Response Body: {
     response: true 
 }
+Example: 
+curl -v -H 'Content-Type: application/json' -H 'Accept: application/json' -X POST http://localhost:3000/api/v1/progress.json -d "{\"checklist_id\":3, \"team_id\":1, \"checked\":true, \"user_email\":\"todd.sedano@sv.cmu.edu\", \"user_token\":\"tOkEn\"}"
 ```
 _response will contain a message if it failed_
 
