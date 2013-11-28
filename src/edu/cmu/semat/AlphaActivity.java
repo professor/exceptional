@@ -6,12 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.http.client.HttpResponseException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.savagelook.android.UrlJsonAsyncTask;
 
 import android.app.Activity;
 import android.content.Context;
@@ -39,6 +36,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.savagelook.android.UrlJsonAsyncTask;
+
 import edu.cmu.semat.entities.Alpha;
 import edu.cmu.semat.entities.Card;
 import edu.cmu.semat.entities.Checklist;
@@ -53,6 +53,7 @@ public class AlphaActivity extends FragmentActivity {
 	ViewPager mPager;
 	int index;
 	static int teamId;
+	static String auth_token;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,8 @@ public class AlphaActivity extends FragmentActivity {
 		Intent intent = getIntent();
 		index = intent.getIntExtra("index", 0);
 
+		auth_token = SharedPreferencesUtil.getAuthToken(this, "");
+		
 		new FetchAlphasTask().execute();
 	}
 
@@ -233,7 +236,7 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("fetching alphas from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json", auth_token);
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -266,7 +269,7 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("fetching progress from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json", auth_token);
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -337,12 +340,12 @@ public class AlphaActivity extends FragmentActivity {
 				holder.put("checklist_id",  checklist_id);
 				holder.put("checked", isChecked);
 				holder.put("team_id", teamId);
-				holder.put("user_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
+				holder.put("user_token", auth_token);
 				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
 
 				Log.v(TAG, holder.toString());
 
-				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress", holder);
+				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress", holder, auth_token);
 			} catch (JSONException e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
