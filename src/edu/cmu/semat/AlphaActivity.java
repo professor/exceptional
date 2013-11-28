@@ -51,7 +51,7 @@ public class AlphaActivity extends FragmentActivity {
 
 	AlphaCollectionPagerAdapter mAdapter;
 	ViewPager mPager;
-	int index;
+	int alpha_index;
 	static int teamId;
 	static String auth_token;
 
@@ -63,7 +63,7 @@ public class AlphaActivity extends FragmentActivity {
 
 		System.out.println("executing alphas background task");
 		Intent intent = getIntent();
-		index = intent.getIntExtra("index", 0);
+		alpha_index = intent.getIntExtra("index", 0);
 
 		auth_token = SharedPreferencesUtil.getAuthToken(this, "");
 		
@@ -292,27 +292,35 @@ public class AlphaActivity extends FragmentActivity {
 			((MyApplication) getApplication()).set("progress", progress);
 
 			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
-			setTitle("Alpha " + index + ": " + alphas.get(index).getName());
-			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(index), progress);
+			setTitle("Alpha " + alpha_index + ": " + alphas.get(alpha_index).getName());
+			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(alpha_index), progress);
 
 			mPager = (ViewPager)findViewById(R.id.pager);
 			mPager.setAdapter(mAdapter);
 
 			HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) ((MyApplication) getApplication()).get("currentAlphaStates");
-			mPager.setCurrentItem(currentAlphaStates.get(index) - 1);
+			mPager.setCurrentItem(currentAlphaStates.get(alpha_index) - 1);
 
 			// Watch for button clicks.
-			Button button = (Button)findViewById(R.id.goto_first);
+			Button button = (Button)findViewById(R.id.notes);
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					mPager.setCurrentItem(0);
+					Intent i = new Intent(getApplicationContext(), CommentsActivity.class);
+					i.putExtra("title", "Notes");
+					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes");
+					i.putExtra("alpha_index", alpha_index);
+					startActivity(i);
 				}
 			});
 
-			button = (Button)findViewById(R.id.goto_last);
+			button = (Button)findViewById(R.id.actions);
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					mPager.setCurrentItem(mAdapter.getCount()-1);
+					Intent i = new Intent(getApplicationContext(), CommentsActivity.class);
+					i.putExtra("title", "Actions");
+					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_actions");
+					i.putExtra("alpha_index", alpha_index);
+					startActivity(i);
 				}
 			});
 		}
@@ -349,11 +357,11 @@ public class AlphaActivity extends FragmentActivity {
 			} catch (JSONException e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			} catch (Exception e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			}			
 			return json;
 		}

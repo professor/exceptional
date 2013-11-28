@@ -1,6 +1,7 @@
 package edu.cmu.semat.utils;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,7 +32,7 @@ public class HTTPUtils {
 		if(authToken != null)
 			con.setRequestProperty("Authorization", "Devise " + authToken);
 
-//		int responseCode = con.getResponseCode();
+		//		int responseCode = con.getResponseCode();
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String inputLine;
@@ -45,7 +46,35 @@ public class HTTPUtils {
 		return response.toString();
 	}
 
-	// HTTP POST request			
+	// HTTP POST request	
+	public static String sendPost(String url, String data) throws Exception {
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		
+		con.setRequestMethod("POST");
+		
+		// Send post request
+		con.setDoOutput(true);
+		
+		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		wr.writeBytes(data);
+		wr.flush();
+		wr.close();
+		
+//		int responseCode = con.getResponseCode();
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+		
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+		
+		return response.toString();
+	}
+
 	public static JSONObject sendPost(String url, JSONObject holder) throws Exception {
 		return HTTPUtils.sendPost(url, holder, null);
 	}
