@@ -26,7 +26,9 @@ public class OverviewActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_overview);
 
+		@SuppressWarnings("unchecked")
 		ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
+		@SuppressWarnings("unchecked")
 		HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) ((MyApplication) getApplication()).get("currentAlphaStates");
 		
 		setTitle("Overview of Alphas");

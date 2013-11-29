@@ -200,8 +200,6 @@ public class AlphaActivity extends FragmentActivity {
 
 	private class FetchAlphasTask extends AsyncTask<String, Void, String> {
 
-		private int index;
-
 		@Override
 		protected String doInBackground(String... urls) {
 
@@ -255,7 +253,10 @@ public class AlphaActivity extends FragmentActivity {
 			JSONObject r = new JSONObject(result);
 			JSONObject s = (JSONObject) r.get("current_alpha_states");
 			HashMap<Integer, Integer> currentAlphaStates = new HashMap<Integer, Integer>();
+			
+			@SuppressWarnings("unchecked")
 			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
+			
 			for(int alpha = 1; alpha <= alphas.size(); alpha++){
 				int card = s.getInt(Integer.toString(alpha));
 				currentAlphaStates.put(alpha-1, card);
@@ -295,6 +296,7 @@ public class AlphaActivity extends FragmentActivity {
 			}
 			((MyApplication) getApplication()).set("progress", progress);
 
+			@SuppressWarnings("unchecked")
 			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
 			setTitle("Alpha " + alpha_index + ": " + alphas.get(alpha_index).getName());
 			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(alpha_index), progress);
@@ -302,6 +304,7 @@ public class AlphaActivity extends FragmentActivity {
 			mPager = (ViewPager)findViewById(R.id.pager);
 			mPager.setAdapter(mAdapter);
 
+			@SuppressWarnings("unchecked")
 			HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) ((MyApplication) getApplication()).get("currentAlphaStates");
 			mPager.setCurrentItem(currentAlphaStates.get(alpha_index) - 1);
 
@@ -311,7 +314,7 @@ public class AlphaActivity extends FragmentActivity {
 				public void onClick(View v) {
 					Intent i = new Intent(getApplicationContext(), CommentsActivity.class);
 					i.putExtra("title", "Notes");
-					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes");
+					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes.json");
 					i.putExtra("alpha_index", alpha_index);
 					startActivity(i);
 				}
@@ -322,7 +325,7 @@ public class AlphaActivity extends FragmentActivity {
 				public void onClick(View v) {
 					Intent i = new Intent(getApplicationContext(), CommentsActivity.class);
 					i.putExtra("title", "Actions");
-					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_actions");
+					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_actions.json");
 					i.putExtra("alpha_index", alpha_index);
 					startActivity(i);
 				}

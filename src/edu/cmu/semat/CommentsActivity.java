@@ -3,15 +3,10 @@ package edu.cmu.semat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.savagelook.android.UrlJsonAsyncTask;
-
-import edu.cmu.semat.utils.HTTPUtils;
-import edu.cmu.semat.utils.SharedPreferencesUtil;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -19,12 +14,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.savagelook.android.UrlJsonAsyncTask;
+
+import edu.cmu.semat.utils.HTTPUtils;
+import edu.cmu.semat.utils.SharedPreferencesUtil;
+
 public class CommentsActivity extends Activity {
 
 	private static final String TAG = "CommentsActivity";
 	
-	private int alpha_id;
-	private String url;
+	private static int alpha_id;
+	private static String url;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,7 @@ public class CommentsActivity extends Activity {
 		alpha_id = alpha_index + 1;
 		TextView title_view = (TextView) findViewById(R.id.coments__title);
 		title_view.setText(title);
+		this.setTitle(title);
 	}
 
 	@Override
@@ -70,15 +71,13 @@ public class CommentsActivity extends Activity {
 				JSONObject holder = new JSONObject();
 
 				holder.put("notes",  comment);
-				int teamId = SharedPreferencesUtil.getCurrentTeamId((Activity)context, 1);
+				holder.put("actions", comment);
 				holder.put("user_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
 				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
+				holder.put("alpha_id", alpha_id);
 				Log.v(TAG, holder.toString());
-				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes.json", holder);
+				json = HTTPUtils.sendPost(url, holder);
 
-// This isn't necessary....				
-//				String auth_token =  SharedPreferencesUtil.getAuthToken((Activity)context, "");
-//				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes.json", holder, auth_token);
 			} catch (JSONException e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
