@@ -18,5 +18,6 @@
     <string name="title_activity_alpha">AlphaActivity</string>
     <string name="title_activity_overview">OverviewActivity</string>
     <string name="password_button">Ok</string>
+    <string name="title_activity_comments">CommentsActivity</string>
 
 </resources>

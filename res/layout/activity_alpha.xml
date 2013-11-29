@@ -21,17 +21,19 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/goto_first"
-            android:layout_width="wrap_content"
+            android:id="@+id/notes"
             android:layout_height="wrap_content"
-            android:text="first" >
+            android:layout_width="0px"
+            android:layout_weight="1"
+            android:text="Notes" >
         </Button>
 
         <Button
-            android:id="@+id/goto_last"
-            android:layout_width="wrap_content"
+            android:id="@+id/actions"
             android:layout_height="wrap_content"
-            android:text="last" >
+            android:layout_width="0px"
+            android:layout_weight="1"
+            android:text="Actions" >
         </Button>
     </LinearLayout>
 

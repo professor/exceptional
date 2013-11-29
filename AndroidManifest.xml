@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <application
-        android:name="MyApplication"
+        android:name="edu.cmu.semat.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -23,7 +23,7 @@
         <activity
             android:name="edu.cmu.semat.MainActivity"
             android:label="@string/app_name"
-            android:noHistory="true">
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,7 +33,7 @@
         <activity
             android:name="edu.cmu.semat.IntroductionActivity"
             android:label="@string/introduction_activity_display_message"
-            android:noHistory="true"             
+            android:noHistory="true"
             android:parentActivityName="edu.cmu.sematt.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -42,7 +42,7 @@
         <activity
             android:name="edu.cmu.semat.EmailPickerActivity"
             android:label="@string/title_activity_email_picker"
-            android:noHistory="true" 
+            android:noHistory="true"
             android:parentActivityName="edu.cmu.semat.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -60,12 +60,12 @@
             android:name="edu.cmu.semat.WaitForRegistrationEmailActivity"
             android:label="@string/title_activity_wait_for_registration"
             android:noHistory="true" >
-        </activity>        
+        </activity>
         <activity
             android:name="edu.cmu.semat.LoginActivity"
             android:label="@string/title_activity_login"
             android:noHistory="true" >
-        </activity>        
+        </activity>
         <activity
             android:name="edu.cmu.semat.AlphaActivity"
             android:label="@string/title_activity_alpha" >
@@ -73,6 +73,10 @@
         <activity
             android:name="edu.cmu.semat.OverviewActivity"
             android:label="@string/title_activity_overview" >
+        </activity>
+        <activity
+            android:name="edu.cmu.semat.CommentsActivity"
+            android:label="@string/title_activity_comments" >
         </activity>
     </application>
 

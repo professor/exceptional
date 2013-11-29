@@ -6,12 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.http.client.HttpResponseException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.savagelook.android.UrlJsonAsyncTask;
 
 import android.app.Activity;
 import android.content.Context;
@@ -39,6 +36,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.savagelook.android.UrlJsonAsyncTask;
+
 import edu.cmu.semat.entities.Alpha;
 import edu.cmu.semat.entities.Card;
 import edu.cmu.semat.entities.Checklist;
@@ -51,8 +51,9 @@ public class AlphaActivity extends FragmentActivity {
 
 	AlphaCollectionPagerAdapter mAdapter;
 	ViewPager mPager;
-	int index;
+	int alpha_index;
 	static int teamId;
+	static String auth_token;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +63,10 @@ public class AlphaActivity extends FragmentActivity {
 
 		System.out.println("executing alphas background task");
 		Intent intent = getIntent();
-		index = intent.getIntExtra("index", 0);
+		alpha_index = intent.getIntExtra("index", 0);
 
+		auth_token = SharedPreferencesUtil.getAuthToken(this, "");
+		
 		new FetchAlphasTask().execute();
 	}
 
@@ -233,7 +236,7 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("fetching alphas from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json", auth_token);
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -266,7 +269,7 @@ public class AlphaActivity extends FragmentActivity {
 			System.out.println("fetching progress from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json");
+				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json", auth_token);
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -289,27 +292,35 @@ public class AlphaActivity extends FragmentActivity {
 			((MyApplication) getApplication()).set("progress", progress);
 
 			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
-			setTitle("Alpha " + index + ": " + alphas.get(index).getName());
-			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(index), progress);
+			setTitle("Alpha " + alpha_index + ": " + alphas.get(alpha_index).getName());
+			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(alpha_index), progress);
 
 			mPager = (ViewPager)findViewById(R.id.pager);
 			mPager.setAdapter(mAdapter);
 
 			HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) ((MyApplication) getApplication()).get("currentAlphaStates");
-			mPager.setCurrentItem(currentAlphaStates.get(index) - 1);
+			mPager.setCurrentItem(currentAlphaStates.get(alpha_index) - 1);
 
 			// Watch for button clicks.
-			Button button = (Button)findViewById(R.id.goto_first);
+			Button button = (Button)findViewById(R.id.notes);
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					mPager.setCurrentItem(0);
+					Intent i = new Intent(getApplicationContext(), CommentsActivity.class);
+					i.putExtra("title", "Notes");
+					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes");
+					i.putExtra("alpha_index", alpha_index);
+					startActivity(i);
 				}
 			});
 
-			button = (Button)findViewById(R.id.goto_last);
+			button = (Button)findViewById(R.id.actions);
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					mPager.setCurrentItem(mAdapter.getCount()-1);
+					Intent i = new Intent(getApplicationContext(), CommentsActivity.class);
+					i.putExtra("title", "Actions");
+					i.putExtra("url", "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_actions");
+					i.putExtra("alpha_index", alpha_index);
+					startActivity(i);
 				}
 			});
 		}
@@ -337,20 +348,20 @@ public class AlphaActivity extends FragmentActivity {
 				holder.put("checklist_id",  checklist_id);
 				holder.put("checked", isChecked);
 				holder.put("team_id", teamId);
-				holder.put("user_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
+				holder.put("user_token", auth_token);
 				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
 
 				Log.v(TAG, holder.toString());
 
-				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/mark.json", holder);
+				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/mark.json", holder, auth_token);
 			} catch (JSONException e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			} catch (Exception e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
-				return null;
+				return new JSONObject();
 			}			
 			return json;
 		}
