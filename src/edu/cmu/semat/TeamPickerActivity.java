@@ -115,11 +115,10 @@ public class TeamPickerActivity extends ListActivity {
 			Log.v(TAG, "Performing team fetch callback");
 			TeamPickerActivity.teams = Team.makeCollectionfromJSONString(result);
 
-//			TeamPickerActivity.teams  = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		
-			
-			if(teams.size() == 1) {
-				moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
-			}
+//          Consider allowing the user to always pick their team			
+//			if(teams.size() == 1) {
+//				moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
+//			}
 					
 		    ArrayAdapter<String> adapter = new ArrayAdapter<String>(TeamPickerActivity.this,
 		            android.R.layout.simple_list_item_1, Team.arrayListToNames(TeamPickerActivity.teams));

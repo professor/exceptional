@@ -8,6 +8,9 @@
     <item
         android:id="@+id/goto_overview"
         android:orderInCategory="100"
-        android:title="Overview"/>
-
+        android:title="@string/action_overview"/>
+    <item
+        android:id="@+id/goto_team_picker"
+        android:orderInCategory="100"
+        android:title="@string/action_teams"/>
 </menu>

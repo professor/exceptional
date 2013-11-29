@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -49,6 +50,14 @@ public class OverviewActivity extends Activity {
 		getMenuInflater().inflate(R.menu.overview, menu);
 		return true;
 	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.goto_team_picker){
+			Intent i = new Intent(getApplicationContext(), TeamPickerActivity.class);
+			startActivity(i);
+		}
+		return true;
+	}	
 
 
 	private static class AlphaArrayAdapter extends ArrayAdapter<Alpha> {

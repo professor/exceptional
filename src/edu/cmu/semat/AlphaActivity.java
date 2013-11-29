@@ -82,6 +82,10 @@ public class AlphaActivity extends FragmentActivity {
 			Intent i = new Intent(getApplicationContext(), OverviewActivity.class);
 			startActivity(i);
 		}
+		if(item.getItemId() == R.id.goto_team_picker){
+			Intent i = new Intent(getApplicationContext(), TeamPickerActivity.class);
+			startActivity(i);
+		}
 		return true;
 	}
 
