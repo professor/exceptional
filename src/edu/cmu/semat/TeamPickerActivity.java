@@ -3,7 +3,6 @@ package edu.cmu.semat;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -45,14 +44,6 @@ public class TeamPickerActivity extends ListActivity {
 //		setListAdapter(adapter); 			
 	}
 
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
-	private void setupActionBar() {
-
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
-	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
