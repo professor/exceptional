@@ -119,7 +119,7 @@ Response Body: {
 
 ### Upload the checkbox modifications
 ```
-Method: POST /api/v1/progress<teamId>/save_notes.json
+Method: POST /api/v1/progress<teamId>/mark.json
 Request Body: {
     currentVersion: 2,  #Not sure about this
     checklist_id: <guid>
