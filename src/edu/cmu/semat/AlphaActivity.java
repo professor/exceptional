@@ -342,7 +342,7 @@ public class AlphaActivity extends FragmentActivity {
 
 				Log.v(TAG, holder.toString());
 
-				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress", holder);
+				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/mark.json", holder);
 			} catch (JSONException e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
