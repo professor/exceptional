@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 public class CommentsActivity extends Activity {
 
+	private static final String TAG = "CommentsActivity";
+	
 	private int alpha_id;
 	private String url;
 
@@ -47,63 +49,62 @@ public class CommentsActivity extends Activity {
 	public void uploadComment(View v){
 		EditText et = (EditText) findViewById(R.id.comments__field);
 		String comment = et.getText().toString();
-
+		new SendCommentTask(CommentsActivity.this, comment).execute();
 	}
 
 	// Uses AsyncTask to create a task away from the main UI thread.
-//	private static class SendCommentTask extends UrlJsonAsyncTask {
-//		private int checklist_id;
-//		private boolean isChecked;
-//		private String exceptionMessage;
-//
-//		public SendCommentTask(Context context, int checklist_id, boolean isChecked) {
-//			super(context);
-//			this.checklist_id = checklist_id;
-//			this.isChecked = isChecked;
-//			this.setMessageLoading("Updating server");
-//		}
-//
-//		@Override
-//		protected JSONObject doInBackground(String... urls) {
-//			JSONObject json = new JSONObject();			
-//			try {
-//				JSONObject holder = new JSONObject();
-//
-//				holder.put("checklist_id",  checklist_id);
-//				holder.put("checked", isChecked);
-//				holder.put("team_id", teamId);
-//				holder.put("user_token", auth_token);
-//				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
-//
-//				Log.v(TAG, holder.toString());
-//
-//				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress", holder, auth_token);
-//			} catch (JSONException e) {
-//				exceptionMessage = e.getMessage();
-//				e.printStackTrace();
-//				return new JSONObject();
-//			} catch (Exception e) {
-//				exceptionMessage = e.getMessage();
-//				e.printStackTrace();
-//				return new JSONObject();
-//			}			
-//			return json;
-//		}
-//
-//		// onPostExecute displays the results of the AsyncTask.
-//		@Override
-//		protected void onPostExecute(JSONObject json) {
-//			Log.v(TAG, "SendProgressTask onPostExecute()");
-//			Log.v(TAG, json.toString());
-//
-//			if (json.getBoolean("response")) {
-//				Log.v(TAG, "Synced with server");
-//				Toast.makeText(context, "Synced with server", Toast.LENGTH_LONG).show();
-//			} else {
-//				Log.v(TAG, "Uploading progress failed! " + exceptionMessage );
-//				Toast.makeText(context, "Uploading progress failed! " + exceptionMessage, Toast.LENGTH_LONG).show();
-//			}
-//			super.onPostExecute(json);
-//		}
-//	}
+	private static class SendCommentTask extends UrlJsonAsyncTask {
+		private String comment;
+		private String exceptionMessage;
+
+		public SendCommentTask(Context context, String comment) {
+			super(context);
+			this.comment = comment;
+			this.setMessageLoading("Updating server");
+		}
+
+		@Override
+		protected JSONObject doInBackground(String... urls) {
+			JSONObject json = new JSONObject();			
+			try {
+				JSONObject holder = new JSONObject();
+
+				holder.put("notes",  comment);
+				int teamId = SharedPreferencesUtil.getCurrentTeamId((Activity)context, 1);
+				holder.put("user_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
+				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
+				Log.v(TAG, holder.toString());
+				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes.json", holder);
+
+// This isn't necessary....				
+//				String auth_token =  SharedPreferencesUtil.getAuthToken((Activity)context, "");
+//				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/save_notes.json", holder, auth_token);
+			} catch (JSONException e) {
+				exceptionMessage = e.getMessage();
+				e.printStackTrace();
+				return new JSONObject();
+			} catch (Exception e) {
+				exceptionMessage = e.getMessage();
+				e.printStackTrace();
+				return new JSONObject();
+			}			
+			return json;
+		}
+
+		// onPostExecute displays the results of the AsyncTask.
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			Log.v(TAG, "SendProgressTask onPostExecute()");
+			Log.v(TAG, json.toString());
+
+			if (json.getBoolean("response")) {
+				Log.v(TAG, "Synced with server");
+				Toast.makeText(context, "Synced with server", Toast.LENGTH_LONG).show();
+			} else {
+				Log.v(TAG, "Uploading progress failed! " + exceptionMessage );
+				Toast.makeText(context, "Uploading progress failed! " + exceptionMessage, Toast.LENGTH_LONG).show();
+			}
+			super.onPostExecute(json);
+		}
+	}
 }
