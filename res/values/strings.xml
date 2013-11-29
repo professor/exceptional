@@ -15,9 +15,9 @@
     <string name="login_text_view">Please select a user account</string>
     <string name="password_text_view">Please enter your password</string>
     <string name="wait_for_registration_email">Please check your email account for an invitation email. \n \n You must first create an account on the website prior to using this application</string>
-    <string name="title_activity_alpha">AlphaActivity</string>
-    <string name="title_activity_overview">OverviewActivity</string>
+    <string name="title_activity_alpha">Alphas</string>
+    <string name="title_activity_overview">Overview</string>
     <string name="password_button">Ok</string>
-    <string name="title_activity_comments">CommentsActivity</string>
+    <string name="title_activity_comments">Comments And Actions</string>
 
 </resources>

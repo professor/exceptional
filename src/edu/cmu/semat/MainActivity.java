@@ -15,16 +15,21 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		Intent intent = null;
 		if(!SharedPreferencesUtil.getSplashScreenSeenByUser(this)) {
-			 Log.v(TAG, "Go to intent: introductionActivity");			
-			  Intent intent = new Intent(this, IntroductionActivity.class);
-			  startActivity(intent);
-			
+			 Log.v(TAG, "Go to intent: IntroductionActivity");			
+			 intent = new Intent(this, IntroductionActivity.class);
+		} else if(SharedPreferencesUtil.getCurrentEmailAddress(this,  "").equals("")) {
+			 Log.v(TAG, "Go to intent: EmailPickerActivity");			
+			 intent = new Intent(this, EmailPickerActivity.class);
+		} else if(SharedPreferencesUtil.getAuthToken(this,  "").equals("")) {
+			 Log.v(TAG, "Go to intent: LoginActivity");			
+			 intent = new Intent(this, LoginActivity.class);
 		} else {
-			 Log.v(TAG, "Go to intent: emailPickerActivity");			
-			  Intent intent = new Intent(this, EmailPickerActivity.class);
-			  startActivity(intent);
+			 Log.v(TAG, "Go to intent: TeamPickerActivity");			
+			 intent = new Intent(this, TeamPickerActivity.class);
 		}
+	    startActivity(intent);
 		
 	}
 
