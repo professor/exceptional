@@ -242,7 +242,11 @@ public class AlphaActivity extends FragmentActivity {
 		protected String doInBackground(String... urls) {
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet(AlphaActivity.this, "http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json");
+				String data = "?user_token=" + SharedPreferencesUtil.getAuthToken(AlphaActivity.this, "") + 
+				              "&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(AlphaActivity.this, "");
+				String url = "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json";
+
+				return HTTPUtils.sendGet(AlphaActivity.this, url + data);
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -279,7 +283,11 @@ public class AlphaActivity extends FragmentActivity {
 		@Override
 		protected String doInBackground(String... urls) {
 			try {
-				return HTTPUtils.sendGet(AlphaActivity.this, "http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json");
+				String data = "?user_token=" + SharedPreferencesUtil.getAuthToken(AlphaActivity.this, "") + 
+ 			                  "&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(AlphaActivity.this, "");
+				String url = "https://semat.herokuapp.com/api/v1/progress/" + teamId + ".json";
+
+				return HTTPUtils.sendGet(AlphaActivity.this, url + data);
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
