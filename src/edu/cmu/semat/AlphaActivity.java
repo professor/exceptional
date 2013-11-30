@@ -65,7 +65,7 @@ public class AlphaActivity extends FragmentActivity {
 		alpha_index = intent.getIntExtra("index", 0);
 
 		auth_token = SharedPreferencesUtil.getAuthToken(this, "");
-		
+
 		new FetchAlphasTask().execute();
 	}
 
@@ -93,7 +93,7 @@ public class AlphaActivity extends FragmentActivity {
 		private Set<Integer> progress;
 		private Alpha alpha = null;
 		private Activity activity;
-		
+
 		public AlphaCollectionPagerAdapter(FragmentManager fm, Alpha alpha, Set<Integer> progress, Activity activity) {
 			super(fm);
 			this.num_items = alpha.getCards().size();
@@ -167,7 +167,7 @@ public class AlphaActivity extends FragmentActivity {
 		Set<Integer> progress;
 		Context context;
 		Activity activity;
-		
+
 
 		public ChecklistArrayAdapter(Context context, int resource, ArrayList<Checklist> objects, Set<Integer> progress, Activity activity) {
 			super(context, resource, objects);
@@ -208,19 +208,15 @@ public class AlphaActivity extends FragmentActivity {
 
 		@Override
 		protected String doInBackground(String... urls) {
-
-			if(! ((MyApplication) getApplication()).containsKey("alphas")){
-				// params comes from the execute() call: params[0] is the url.
-				try {
-					return HTTPUtils.sendGet(AlphaActivity.this, "http://semat.herokuapp.com/api/v1/alphas.json");
-				} catch (IOException e) {
-					return "Unable to retrieve web page. URL may be invalid.";
-				} catch (Exception e) {
-					e.printStackTrace();
-					return "Unable to retrieve web page. URL may be invalid.";
-				}
+			try {
+				return HTTPUtils.sendGet(AlphaActivity.this, "http://semat.herokuapp.com/api/v1/alphas.json");
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
 			}
-			return null;
 		}
 
 		// onPostExecute displays the results of the AsyncTask.
@@ -243,7 +239,7 @@ public class AlphaActivity extends FragmentActivity {
 			// params comes from the execute() call: params[0] is the url.
 			try {
 				String data = "?user_token=" + SharedPreferencesUtil.getAuthToken(AlphaActivity.this, "") + 
-				              "&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(AlphaActivity.this, "");
+						"&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(AlphaActivity.this, "");
 				String url = "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json";
 
 				return HTTPUtils.sendGet(AlphaActivity.this, url + data);
@@ -265,10 +261,10 @@ public class AlphaActivity extends FragmentActivity {
 			JSONObject r = new JSONObject(result);
 			JSONObject s = (JSONObject) r.get("current_alpha_states");
 			HashMap<Integer, Integer> currentAlphaStates = new HashMap<Integer, Integer>();
-			
+
 			@SuppressWarnings("unchecked")
 			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
-			
+
 			for(int alpha = 1; alpha <= alphas.size(); alpha++){
 				int card = s.getInt(Integer.toString(alpha));
 				currentAlphaStates.put(alpha-1, card);
@@ -284,7 +280,7 @@ public class AlphaActivity extends FragmentActivity {
 		protected String doInBackground(String... urls) {
 			try {
 				String data = "?user_token=" + SharedPreferencesUtil.getAuthToken(AlphaActivity.this, "") + 
- 			                  "&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(AlphaActivity.this, "");
+						"&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(AlphaActivity.this, "");
 				String url = "https://semat.herokuapp.com/api/v1/progress/" + teamId + ".json";
 
 				return HTTPUtils.sendGet(AlphaActivity.this, url + data);
@@ -303,7 +299,7 @@ public class AlphaActivity extends FragmentActivity {
 				Toast.makeText(AlphaActivity.this, "No data received!", Toast.LENGTH_LONG).show();
 				return;
 			}
-			
+
 			JSONObject r = new JSONObject(result);
 			JSONArray p = (JSONArray) r.get("checkboxes");
 			HashSet<Integer> progress = new HashSet<Integer>();
@@ -400,9 +396,9 @@ public class AlphaActivity extends FragmentActivity {
 				super.onPostExecute(json);
 				return;
 			}
-			
+
 			Log.v(TAG, json.toString());
-			
+
 			if (json.getBoolean("response")) {
 				Log.v(TAG, "Synced with server");
 				Toast.makeText(context, "Synced with server", Toast.LENGTH_LONG).show();
