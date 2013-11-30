@@ -13,26 +13,27 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.util.Log;
+import edu.cmu.semat.MyApplication;
+
 // source http://www.mkyong.com/java/how-to-send-http-request-getpost-in-java/
 
 public class HTTPUtils {
+	private static final String TAG = "HTTPUtils";
 
 	// HTTP GET request
-	public static String sendGet(String url) throws Exception {
-		return HTTPUtils.sendGet(url, null);
-	}
-
-	public static String sendGet(String url, String authToken) throws Exception {
-
+	public static String sendGet(Activity activity, String url, boolean isOnline) throws Exception {
+		
+		if(! isOnline){
+			Log.v(TAG, "Offline - using cache");
+			return SharedPreferencesUtil.getString(activity, url, null);
+		}
+		
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
 		con.setRequestMethod("GET");
-
-		if(authToken != null)
-			con.setRequestProperty("Authorization", "Devise " + authToken);
-
-		//		int responseCode = con.getResponseCode();
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String inputLine;
@@ -43,17 +44,24 @@ public class HTTPUtils {
 		}
 		in.close();
 
+		SharedPreferencesUtil.setString(activity, url, response.toString());
 		return response.toString();
 	}
-
+	
+	public static String sendGet(Activity activity, String url) throws Exception {
+		return HTTPUtils.sendGet(activity, url, ((MyApplication) activity.getApplication()).isNetworkAvailable());
+	}
+	
 	// HTTP POST request	
-	public static String sendPost(String url, String data) throws Exception {
+	public static String sendPost(Activity activity, String url, String data) throws Exception {
+		if(! ((MyApplication) activity.getApplication()).isNetworkAvailable()){
+			return null;
+		}
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		
 		con.setRequestMethod("POST");
 		
-		// Send post request
 		con.setDoOutput(true);
 		
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
@@ -61,8 +69,6 @@ public class HTTPUtils {
 		wr.flush();
 		wr.close();
 		
-//		int responseCode = con.getResponseCode();
-		
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
@@ -75,12 +81,10 @@ public class HTTPUtils {
 		return response.toString();
 	}
 
-	public static JSONObject sendPost(String url, JSONObject holder) throws Exception {
-		return HTTPUtils.sendPost(url, holder, null);
-	}
-
-	public static JSONObject sendPost(String url, JSONObject holder, String authToken) throws Exception {
-
+	public static JSONObject sendPost(Activity activity, String url, JSONObject holder) throws Exception {
+		if(! ((MyApplication) activity.getApplication()).isNetworkAvailable()){
+			return null;
+		}
 		HttpPost post = new HttpPost(url);
 		DefaultHttpClient client = new DefaultHttpClient();
 		String response = null;
@@ -91,8 +95,6 @@ public class HTTPUtils {
 		// setup the request headers
 		post.setHeader("Accept", "application/json");
 		post.setHeader("Content-Type", "application/json");
-		if(authToken != null)
-			post.setHeader("Authorization", "Devise " + authToken);
 
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		response = client.execute(post, responseHandler);

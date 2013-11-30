@@ -68,13 +68,6 @@ public class EmailPickerActivity extends ListActivity {
 		return true;
 	}
 
-	
-
-	// Uses AsyncTask to create a task away from the main UI thread. This task takes a 
-	// URL string and uses it to create an HttpUrlConnection. Once the connection
-	// has been established, the AsyncTask downloads the contents of the webpage as
-	// an InputStream. Finally, the InputStream is converted into a string, which is
-	// displayed in the UI by the AsyncTask's onPostExecute method.
 	private class FindOrRegisterUserTask extends AsyncTask<String, Void, String> {
 		@Override
 		protected String doInBackground(String... urls) {
@@ -83,8 +76,7 @@ public class EmailPickerActivity extends ListActivity {
 
 			Log.v(TAG, "find_or_register user " + email);
 			try {
-//				return HTTPUtils.sendPost("http://semat.herokuapp.com/api/v1/test/post.json", "email=" + email);
-				return HTTPUtils.sendPost("http://semat.herokuapp.com/api/v1/users/find_or_register.json", "email=" + email);
+				return HTTPUtils.sendPost(EmailPickerActivity.this, "http://semat.herokuapp.com/api/v1/users/find_or_register.json", "email=" + email);
 			} catch (IOException e) {
 				Log.v(TAG, e.getMessage());
 				return "EmailPickerActivity: Unable to retrieve web page. URL may be invalid. " + e.getMessage();
@@ -95,13 +87,16 @@ public class EmailPickerActivity extends ListActivity {
 			}
 		}
 
-		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(String result) {
 			Log.v(TAG, "find_or_register user performing fetch callback");
+			if(result == null){
+				Toast.makeText(EmailPickerActivity.this, "Cannot login - device offline", Toast.LENGTH_LONG).show();
+				super.onPostExecute(result);
+				return;
+			}
 			Log.v(TAG, result);
 			
-//			if(result.equals("{\"response\":\"Confirm email sent\"}")) {
 			if(result.equals("{\"response\":true}")) {
 					Intent intent = new Intent(EmailPickerActivity.this, LoginActivity.class);
 					startActivity(intent);							
@@ -109,9 +104,6 @@ public class EmailPickerActivity extends ListActivity {
 				Intent intent = new Intent(EmailPickerActivity.this, WaitForRegistrationEmailActivity.class);
 				startActivity(intent);			
 			}
-				
-			
-			
 		}
 	}	
 }

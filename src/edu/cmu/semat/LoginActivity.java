@@ -79,7 +79,7 @@ public class LoginActivity extends Activity {
 					holder.put("user", userObj);
 					Log.v(TAG, holder.toString());
 
-					json = HTTPUtils.sendPost(urls[0], holder);
+					json = HTTPUtils.sendPost(LoginActivity.this, urls[0], holder);
 
 				} catch (HttpResponseException e) {
 					e.printStackTrace();
@@ -103,6 +103,12 @@ public class LoginActivity extends Activity {
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(JSONObject json) {
+			if(json == null){
+				Toast.makeText(context, "Device offline", Toast.LENGTH_LONG).show();
+				super.onPostExecute(json);
+				return;
+			}
+			
 			try {
 				Log.v(TAG, "send_password onPostExecute()");
 				Log.v(TAG, json.toString());

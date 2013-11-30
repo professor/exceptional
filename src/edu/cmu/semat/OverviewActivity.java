@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.cmu.semat.entities.Alpha;
 
 public class OverviewActivity extends Activity {
@@ -25,25 +26,33 @@ public class OverviewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_overview);
-
-		@SuppressWarnings("unchecked")
-		ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
-		@SuppressWarnings("unchecked")
-		HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) ((MyApplication) getApplication()).get("currentAlphaStates");
-		
 		setTitle("Overview of Alphas");
 
-		GridView grid = (GridView) findViewById(R.id.gridView1);
-		grid.setAdapter(new AlphaArrayAdapter(getApplicationContext(), R.layout.grid_item, alphas, currentAlphaStates));
+		try{
+			@SuppressWarnings("unchecked")
+			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
+			@SuppressWarnings("unchecked")
+			HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) ((MyApplication) getApplication()).get("currentAlphaStates");
 
-		grid.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView parent, View v, int position, long id) {
-				Intent i = new Intent(getApplicationContext(), AlphaActivity.class);
-				i.putExtra("index", position);
-				System.out.println("position " + position);
-				startActivity(i);
-			}
-		});
+
+
+			GridView grid = (GridView) findViewById(R.id.gridView1);
+			grid.setAdapter(new AlphaArrayAdapter(getApplicationContext(), R.layout.grid_item, alphas, currentAlphaStates));
+			grid.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(@SuppressWarnings("rawtypes") AdapterView parent, View v, int position, long id) {
+					Intent i = new Intent(getApplicationContext(), AlphaActivity.class);
+					i.putExtra("index", position);
+					System.out.println("position " + position);
+					startActivity(i);
+				}
+			});
+		}
+		catch(Exception e){
+			Toast.makeText(this, "No data available - device offline", Toast.LENGTH_LONG).show();
+			return;
+		}
+
+
 	}
 
 	@Override
@@ -52,7 +61,7 @@ public class OverviewActivity extends Activity {
 		getMenuInflater().inflate(R.menu.overview, menu);
 		return true;
 	}
-	
+
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == R.id.goto_team_picker){
 			Intent i = new Intent(getApplicationContext(), TeamPickerActivity.class);

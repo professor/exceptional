@@ -76,7 +76,7 @@ public class CommentsActivity extends Activity {
 				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
 				holder.put("alpha_id", alpha_id);
 				Log.v(TAG, holder.toString());
-				json = HTTPUtils.sendPost(url, holder);
+				json = HTTPUtils.sendPost((Activity) context, url, holder);
 
 			} catch (JSONException e) {
 				exceptionMessage = e.getMessage();
@@ -90,10 +90,15 @@ public class CommentsActivity extends Activity {
 			return json;
 		}
 
-		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(JSONObject json) {
 			Log.v(TAG, "SendProgressTask onPostExecute()");
+			if(json == null){
+				Toast.makeText(context, "Not synced - Device offline", Toast.LENGTH_LONG).show();
+				super.onPostExecute(json);
+				return;
+			}
+			
 			Log.v(TAG, json.toString());
 
 			if (json.getBoolean("response")) {

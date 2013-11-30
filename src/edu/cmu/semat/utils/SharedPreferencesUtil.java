@@ -56,14 +56,13 @@ public class SharedPreferencesUtil {
 		return getString(activity, authTokenKey, defaultAuthToken);		
 	}		
 
-	
-	private static void setString(Activity activity, String key, String value) {
+	public static void setString(Activity activity, String key, String value) {
 		SharedPreferences prefs = activity.getSharedPreferences(
 				preferenceFile, Context.MODE_PRIVATE);
 		prefs.edit().putString(key, value).commit();					
 	}
 	
-	private static String getString(Activity activity, String key, String defaultValue) {
+	public static String getString(Activity activity, String key, String defaultValue) {
 		SharedPreferences prefs = activity.getSharedPreferences(
 				preferenceFile, Context.MODE_PRIVATE);
 		String value = prefs.getString(key, defaultValue); 
@@ -95,14 +94,4 @@ public class SharedPreferencesUtil {
 		boolean value = prefs.getBoolean(key, defaultValue);  
 		return value;
 	}
-
-	
-	
-	
-	
-	
-
-
-	
-
 }

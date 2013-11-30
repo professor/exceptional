@@ -30,18 +30,6 @@ public class TeamPickerActivity extends ListActivity {
 		
 		Log.v(TAG, "onCreate()");
 		new FetchTeamsTask().execute("");
-		
-//		teams = ServerUtils.teamsForUserTEST(SharedPreferencesUtil.getCurrentEmailAddress(this, ""));		
-//		
-//      Removing this for demo, we want this screen to be displayed		
-//		if(teams.size() == 1) {
-//			moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
-//		}
-//				
-//	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-//	            android.R.layout.simple_list_item_1, Team.arrayListToNames(teams));
-//		
-//		setListAdapter(adapter); 			
 	}
 
 
@@ -85,25 +73,30 @@ public class TeamPickerActivity extends ListActivity {
 		protected String doInBackground(String... urls) {
 
 			Log.v(TAG, "fetching teams from server");
-			// params comes from the execute() call: params[0] is the url.
 			try {
 				String email = SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
 				String data = "?user_token=" + SharedPreferencesUtil.getAuthToken(TeamPickerActivity.this, "") + 
 				              "&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
 
-				return HTTPUtils.sendGet("https://semat.herokuapp.com/api/v1/users/" + email + "/teams.json" + data);
+				String url = "https://semat.herokuapp.com/api/v1/users/" + email + "/teams.json";
+				
+				return HTTPUtils.sendGet(TeamPickerActivity.this, url + data);
 			} catch (IOException e) {
-				return "Unable to retrieve web page. URL may be invalid.";
+				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
-				return "Unable to retrieve web page. URL may be invalid.";
 			}
+			return null;
 		}
 
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(String result) {
 			Log.v(TAG, "Performing team fetch callback");
+			if(result == null){
+				Toast.makeText(TeamPickerActivity.this, "No data received!", Toast.LENGTH_LONG).show();
+				return;
+			}
 			TeamPickerActivity.teams = Team.makeCollectionfromJSONString(result);
 
 //          Consider allowing the user to always pick their team			

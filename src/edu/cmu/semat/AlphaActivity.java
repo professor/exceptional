@@ -61,7 +61,6 @@ public class AlphaActivity extends FragmentActivity {
 		teamId = SharedPreferencesUtil.getCurrentTeamId(this, 1);
 		setContentView(R.layout.activity_alpha);
 
-		System.out.println("executing alphas background task");
 		Intent intent = getIntent();
 		alpha_index = intent.getIntExtra("index", 0);
 
@@ -93,12 +92,14 @@ public class AlphaActivity extends FragmentActivity {
 		private int num_items = 0;
 		private Set<Integer> progress;
 		private Alpha alpha = null;
-
-		public AlphaCollectionPagerAdapter(FragmentManager fm, Alpha alpha, Set<Integer> progress) {
+		private Activity activity;
+		
+		public AlphaCollectionPagerAdapter(FragmentManager fm, Alpha alpha, Set<Integer> progress, Activity activity) {
 			super(fm);
 			this.num_items = alpha.getCards().size();
 			this.alpha = alpha;
 			this.progress = progress;
+			this.activity = activity;
 		}
 
 		@Override
@@ -108,7 +109,7 @@ public class AlphaActivity extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int position) {
-			return CardFragment.newInstance(position, alpha.getCards().get(position), progress);
+			return CardFragment.newInstance(position, alpha.getCards().get(position), progress, activity);
 		}
 	}
 
@@ -116,17 +117,19 @@ public class AlphaActivity extends FragmentActivity {
 		int mNum;
 		Card card;
 		Set<Integer> progress;
+		Activity activity;
 
 		/**
 		 * Create a new instance of CountingFragment, providing "num"
 		 * as an argument.
 		 */
-		static CardFragment newInstance(int num, Card card, Set<Integer> progress) {
+		static CardFragment newInstance(int num, Card card, Set<Integer> progress, Activity activity) {
 			CardFragment cardFragment = new CardFragment();
 
 			cardFragment.card = card;
 			cardFragment.mNum = num;
 			cardFragment.progress = progress;
+			cardFragment.activity = activity;
 
 			return cardFragment;
 		}
@@ -150,7 +153,7 @@ public class AlphaActivity extends FragmentActivity {
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			setListAdapter(new ChecklistArrayAdapter(getActivity(), R.layout.checklist, card.getChecklists(), progress));
+			setListAdapter(new ChecklistArrayAdapter(getActivity(), R.layout.checklist, card.getChecklists(), progress, activity));
 		}
 
 		@Override
@@ -163,12 +166,15 @@ public class AlphaActivity extends FragmentActivity {
 		ArrayList<Checklist> checklists;
 		Set<Integer> progress;
 		Context context;
+		Activity activity;
+		
 
-		public ChecklistArrayAdapter(Context context, int resource, ArrayList<Checklist> objects, Set<Integer> progress) {
+		public ChecklistArrayAdapter(Context context, int resource, ArrayList<Checklist> objects, Set<Integer> progress, Activity activity) {
 			super(context, resource, objects);
 			this.context = context;
-			checklists = objects;
+			this.checklists = objects;
 			this.progress = progress;
+			this.activity = activity;
 		}
 
 		public int getCount (){
@@ -190,7 +196,7 @@ public class AlphaActivity extends FragmentActivity {
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					int checklist_id = (Integer) buttonView.getTag(R.integer.checklist_id_tag);
-					new SendProgressTask(context, checklist_id, isChecked).execute();
+					new SendProgressTask(context, checklist_id, isChecked, activity).execute();
 				}
 			});
 			return convertView;
@@ -204,10 +210,9 @@ public class AlphaActivity extends FragmentActivity {
 		protected String doInBackground(String... urls) {
 
 			if(! ((MyApplication) getApplication()).containsKey("alphas")){
-				System.out.println("fetching alphas from server");
 				// params comes from the execute() call: params[0] is the url.
 				try {
-					return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/alphas.json");
+					return HTTPUtils.sendGet(AlphaActivity.this, "http://semat.herokuapp.com/api/v1/alphas.json");
 				} catch (IOException e) {
 					return "Unable to retrieve web page. URL may be invalid.";
 				} catch (Exception e) {
@@ -221,11 +226,12 @@ public class AlphaActivity extends FragmentActivity {
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(String result) {
-			if(result != null){
-				System.out.println("Performing alpha fetch callback");
-				ArrayList<Alpha> alphas = Alpha.makeCollectionfromJSONString(result);
-				((MyApplication) getApplication()).set("alphas", alphas);
+			if(result == null){
+				Toast.makeText(AlphaActivity.this, "No data received!", Toast.LENGTH_LONG).show();
+				return;
 			}
+			ArrayList<Alpha> alphas = Alpha.makeCollectionfromJSONString(result);
+			((MyApplication) getApplication()).set("alphas", alphas);
 			new FetchCurrentAlphaStateTask().execute();
 		}
 	}
@@ -234,11 +240,9 @@ public class AlphaActivity extends FragmentActivity {
 
 		@Override
 		protected String doInBackground(String... urls) {
-
-			System.out.println("fetching alphas from server");
 			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json", auth_token);
+				return HTTPUtils.sendGet(AlphaActivity.this, "http://semat.herokuapp.com/api/v1/progress/" + teamId + "/current_alpha_states.json");
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -250,6 +254,10 @@ public class AlphaActivity extends FragmentActivity {
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(String result) {
+			if(result == null){
+				Toast.makeText(AlphaActivity.this, "No data received!", Toast.LENGTH_LONG).show();
+				return;
+			}
 			JSONObject r = new JSONObject(result);
 			JSONObject s = (JSONObject) r.get("current_alpha_states");
 			HashMap<Integer, Integer> currentAlphaStates = new HashMap<Integer, Integer>();
@@ -270,11 +278,8 @@ public class AlphaActivity extends FragmentActivity {
 
 		@Override
 		protected String doInBackground(String... urls) {
-
-			System.out.println("fetching progress from server");
-			// params comes from the execute() call: params[0] is the url.
 			try {
-				return HTTPUtils.sendGet("http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json", auth_token);
+				return HTTPUtils.sendGet(AlphaActivity.this, "http://semat.herokuapp.com/api/v1/progress/" + teamId + ".json");
 			} catch (IOException e) {
 				return "Unable to retrieve web page. URL may be invalid.";
 			} catch (Exception e) {
@@ -286,8 +291,11 @@ public class AlphaActivity extends FragmentActivity {
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
 		protected void onPostExecute(String result) {
-			System.out.println("Performing alpha fetch callback");
-
+			if(result == null){
+				Toast.makeText(AlphaActivity.this, "No data received!", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			JSONObject r = new JSONObject(result);
 			JSONArray p = (JSONArray) r.get("checkboxes");
 			HashSet<Integer> progress = new HashSet<Integer>();
@@ -299,7 +307,7 @@ public class AlphaActivity extends FragmentActivity {
 			@SuppressWarnings("unchecked")
 			ArrayList<Alpha> alphas = (ArrayList<Alpha>) ((MyApplication) getApplication()).get("alphas");
 			setTitle("Alpha " + alpha_index + ": " + alphas.get(alpha_index).getName());
-			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(alpha_index), progress);
+			mAdapter = new AlphaCollectionPagerAdapter(getSupportFragmentManager(), alphas.get(alpha_index), progress, AlphaActivity.this);
 
 			mPager = (ViewPager)findViewById(R.id.pager);
 			mPager.setAdapter(mAdapter);
@@ -338,11 +346,13 @@ public class AlphaActivity extends FragmentActivity {
 		private int checklist_id;
 		private boolean isChecked;
 		private String exceptionMessage;
+		private Activity activity;
 
-		public SendProgressTask(Context context, int checklist_id, boolean isChecked) {
+		public SendProgressTask(Context context, int checklist_id, boolean isChecked, Activity activity) {
 			super(context);
 			this.checklist_id = checklist_id;
 			this.isChecked = isChecked;
+			this.activity = activity;
 			this.setMessageLoading("Updating server");
 		}
 
@@ -360,7 +370,7 @@ public class AlphaActivity extends FragmentActivity {
 
 				Log.v(TAG, holder.toString());
 
-				json = HTTPUtils.sendPost("https://semat.herokuapp.com/api/v1/progress/" + teamId + "/mark.json", holder, auth_token);
+				json = HTTPUtils.sendPost(activity, "https://semat.herokuapp.com/api/v1/progress/" + teamId + "/mark.json", holder);
 			} catch (JSONException e) {
 				exceptionMessage = e.getMessage();
 				e.printStackTrace();
@@ -377,6 +387,12 @@ public class AlphaActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(JSONObject json) {
 			Log.v(TAG, "SendProgressTask onPostExecute()");
+			if(json == null){
+				Toast.makeText(context, "Not synced - device offline", Toast.LENGTH_LONG).show();
+				super.onPostExecute(json);
+				return;
+			}
+			
 			Log.v(TAG, json.toString());
 			
 			if (json.getBoolean("response")) {
