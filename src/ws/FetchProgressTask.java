@@ -46,7 +46,7 @@ public class FetchProgressTask extends AsyncTask<String, Void, String>{
 	@Override
 	protected String doInBackground(String... urls) {
 		try {
-			String data = String.format(auth_token, email_address);
+			String data = String.format("?user_token=%s&user_email=%s", auth_token, email_address);
 			String url = String.format("https://semat.herokuapp.com/api/v1/progress/%s.json", team_id);
 
 			return HTTPUtils.sendGet(activity, url + data);
