@@ -1,28 +1,16 @@
 package edu.cmu.semat;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.savagelook.android.UrlJsonAsyncTask;
-
-import edu.cmu.semat.utils.HTTPUtils;
-import edu.cmu.semat.utils.SharedPreferencesUtil;
+import edu.cmu.semat.ws.SendCommentTask;
 
 public class CommentsActivity extends Activity {
 
-	private static final String TAG = "CommentsActivity";
-	
 	private static int alpha_id;
 	private static String url;
 
@@ -50,65 +38,6 @@ public class CommentsActivity extends Activity {
 	public void uploadComment(View v){
 		EditText et = (EditText) findViewById(R.id.comments__field);
 		String comment = et.getText().toString();
-		new SendCommentTask(CommentsActivity.this, comment).execute();
-	}
-
-	// Uses AsyncTask to create a task away from the main UI thread.
-	private static class SendCommentTask extends UrlJsonAsyncTask {
-		private String comment;
-		private String exceptionMessage;
-
-		public SendCommentTask(Context context, String comment) {
-			super(context);
-			this.comment = comment;
-			this.setMessageLoading("Updating server");
-		}
-
-		@Override
-		protected JSONObject doInBackground(String... urls) {
-			JSONObject json = new JSONObject();			
-			try {
-				JSONObject holder = new JSONObject();
-
-				holder.put("notes",  comment);
-				holder.put("actions", comment);
-				holder.put("user_token", SharedPreferencesUtil.getAuthToken((Activity)context, ""));
-				holder.put("user_email", SharedPreferencesUtil.getCurrentEmailAddress((Activity)context, ""));
-				holder.put("alpha_id", alpha_id);
-				Log.v(TAG, holder.toString());
-				json = HTTPUtils.sendPost((Activity) context, url, holder);
-
-			} catch (JSONException e) {
-				exceptionMessage = e.getMessage();
-				e.printStackTrace();
-				return new JSONObject();
-			} catch (Exception e) {
-				exceptionMessage = e.getMessage();
-				e.printStackTrace();
-				return new JSONObject();
-			}			
-			return json;
-		}
-
-		@Override
-		protected void onPostExecute(JSONObject json) {
-			Log.v(TAG, "SendProgressTask onPostExecute()");
-			if(json == null){
-				Toast.makeText(context, "Not synced - Device offline", Toast.LENGTH_LONG).show();
-				super.onPostExecute(json);
-				return;
-			}
-			
-			Log.v(TAG, json.toString());
-
-			if (json.getBoolean("response")) {
-				Log.v(TAG, "Synced with server");
-				Toast.makeText(context, "Synced with server", Toast.LENGTH_LONG).show();
-			} else {
-				Log.v(TAG, "Uploading progress failed! " + exceptionMessage );
-				Toast.makeText(context, "Uploading progress failed! " + exceptionMessage, Toast.LENGTH_LONG).show();
-			}
-			super.onPostExecute(json);
-		}
+		new SendCommentTask(CommentsActivity.this, comment, url, alpha_id).execute();
 	}
 }
