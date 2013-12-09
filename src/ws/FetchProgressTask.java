@@ -9,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -23,23 +22,12 @@ import edu.cmu.semat.entities.Alpha;
 import edu.cmu.semat.utils.AlphaCollectionPagerAdapter;
 import edu.cmu.semat.utils.HTTPUtils;
 
-public class FetchProgressTask extends AsyncTask<String, Void, String>{
+public class FetchProgressTask extends ExceptionalTask{
 
-	private FragmentActivity activity;
-	private MyApplication application;
-	private String auth_token;
-	private String email_address;
-	private int team_id;
 	private int alpha_index;
 	
-	
 	public FetchProgressTask(FragmentActivity activity, MyApplication application, String auth_token, String email_address, int team_id, int alpha_index){
-		super();
-		this.activity = activity;
-		this.application = application;
-		this.auth_token = auth_token;
-		this.email_address = email_address;
-		this.team_id = team_id;
+		super(application, activity, auth_token, email_address, team_id);
 		this.alpha_index = alpha_index;
 	}
 	
@@ -59,7 +47,6 @@ public class FetchProgressTask extends AsyncTask<String, Void, String>{
 		}
 	}
 
-	// onPostExecute displays the results of the AsyncTask.
 	@Override
 	protected void onPostExecute(String result) {
 		if(result == null){
@@ -78,7 +65,7 @@ public class FetchProgressTask extends AsyncTask<String, Void, String>{
 		@SuppressWarnings("unchecked")
 		ArrayList<Alpha> alphas = (ArrayList<Alpha>) application.get("alphas");
 		activity.setTitle("Alpha " + alpha_index + ": " + alphas.get(alpha_index).getName());
-		AlphaCollectionPagerAdapter mAdapter = new AlphaCollectionPagerAdapter(activity.getSupportFragmentManager(), alphas.get(alpha_index), progress, activity, team_id, auth_token);
+		AlphaCollectionPagerAdapter mAdapter = new AlphaCollectionPagerAdapter(((FragmentActivity) activity).getSupportFragmentManager(), alphas.get(alpha_index), progress, activity, team_id, auth_token);
 
 		ViewPager mPager = (ViewPager)activity.findViewById(R.id.pager);
 		mPager.setAdapter(mAdapter);
@@ -87,7 +74,6 @@ public class FetchProgressTask extends AsyncTask<String, Void, String>{
 		HashMap<Integer, Integer> currentAlphaStates = (HashMap<Integer, Integer>) application.get("currentAlphaStates");
 		mPager.setCurrentItem(currentAlphaStates.get(alpha_index) - 1);
 
-		// Watch for button clicks.
 		Button button = (Button)activity.findViewById(R.id.notes);
 		button.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
