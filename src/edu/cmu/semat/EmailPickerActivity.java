@@ -1,13 +1,13 @@
 package edu.cmu.semat;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import ws.FindOrRegisterUserTask;
+
 import android.app.ListActivity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import edu.cmu.semat.utils.ContactsUtils;
-import edu.cmu.semat.utils.HTTPUtils;
 import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class EmailPickerActivity extends ListActivity {
@@ -30,7 +29,6 @@ public class EmailPickerActivity extends ListActivity {
 	
 		Set<String> emails_set = new HashSet<String>(ContactsUtils.userEmailAddresses(this));
 		ArrayList<String> emails = new ArrayList<String>(emails_set);
-//		ArrayList<String> emails = ContactsUtils.userEmailAddressesTEST(this);
 
 //      Removing this for demo, we want this screen to be displayed		
 //		if(emails.size() == 1) {
@@ -58,7 +56,7 @@ public class EmailPickerActivity extends ListActivity {
 		SharedPreferencesUtil.setCurrentEmailAddress(this, selectedEmailAddress);
 		
 		Log.v(TAG, "executing FindOrRegisterUserTask background task");
-		new FindOrRegisterUserTask().execute("");				
+		new FindOrRegisterUserTask((MyApplication) getApplication(), this, "", selectedEmailAddress, 0, 0).execute();				
 	}
 
 	@Override
@@ -68,42 +66,15 @@ public class EmailPickerActivity extends ListActivity {
 		return true;
 	}
 
-	private class FindOrRegisterUserTask extends AsyncTask<String, Void, String> {
-		@Override
-		protected String doInBackground(String... urls) {
+	public void moveToLoginActivity() {
+		Intent intent = new Intent(EmailPickerActivity.this, LoginActivity.class);
+		startActivity(intent);	
+	}
 
-			String email = SharedPreferencesUtil.getCurrentEmailAddress(EmailPickerActivity.this, "");
+	public void moveToWaitForRegistrationEmailActivity() {
+		Intent intent = new Intent(EmailPickerActivity.this, WaitForRegistrationEmailActivity.class);
+		startActivity(intent);			
+	}
 
-			Log.v(TAG, "find_or_register user " + email);
-			try {
-				return HTTPUtils.sendPost(EmailPickerActivity.this, "http://semat.herokuapp.com/api/v1/users/find_or_register.json", "email=" + email);
-			} catch (IOException e) {
-				Log.v(TAG, e.getMessage());
-				return "EmailPickerActivity: Unable to retrieve web page. URL may be invalid. " + e.getMessage();
-			} catch (Exception e) {
-				Log.v(TAG, e.getMessage());
-				e.printStackTrace();
-				return "EmailPickerActivity: Unable to retrieve web page. URL may be invalid. " + e.getMessage();
-			}
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			Log.v(TAG, "find_or_register user performing fetch callback");
-			if(result == null){
-				Toast.makeText(EmailPickerActivity.this, "Cannot login - device offline", Toast.LENGTH_LONG).show();
-				super.onPostExecute(result);
-				return;
-			}
-			Log.v(TAG, result);
-			
-			if(result.equals("{\"response\":true}")) {
-					Intent intent = new Intent(EmailPickerActivity.this, LoginActivity.class);
-					startActivity(intent);							
-			} else { //User has not confirmed account
-				Intent intent = new Intent(EmailPickerActivity.this, WaitForRegistrationEmailActivity.class);
-				startActivity(intent);			
-			}
-		}
-	}	
+	
 }

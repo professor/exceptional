@@ -3,34 +3,33 @@ package ws;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import edu.cmu.semat.EmailPickerActivity;
-import edu.cmu.semat.LoginActivity;
-import edu.cmu.semat.WaitForRegistrationEmailActivity;
+import edu.cmu.semat.MyApplication;
 import edu.cmu.semat.utils.HTTPUtils;
-import edu.cmu.semat.utils.SharedPreferencesUtil;
 
-public class FindOrRegisterUserTask extends AsyncTask<String, Void, String> {
-	
+public class FindOrRegisterUserTask extends ExceptionalTask {
 	private static final String TAG = "FindOrRegisterUserTask";
 	
 	private String email;
-	private Activity activity;	
-	
-	public FindOrRegisterUserTask(Context context, String email, Activity activity) {
-		super();
-		this.email= email;
-		this.activity = activity;
-	}	
-	
+
+	public FindOrRegisterUserTask(MyApplication application, Activity activity, String auth_token, String email_address, int team_id, int alpha_index){
+		super(application, activity, auth_token, email_address, team_id);
+		this.email = email_address;
+	}
+
+//	
+//		public FindOrRegisterUserTask(MyApplication application,
+//			EmailPickerActivity activity, Object auth_token,
+//			String selectedEmailAddress, Object object, Object object2) {
+//		// TODO Auto-generated constructor stub
+//	}
+
+
 		@Override
 		protected String doInBackground(String... urls) {
 
-			String email = SharedPreferencesUtil.getCurrentEmailAddress(activity, "");
 
 			Log.v(TAG, "find_or_register user " + email);
 			try {

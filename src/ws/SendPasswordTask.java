@@ -8,14 +8,12 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.savagelook.android.UrlJsonAsyncTask;
 
 import edu.cmu.semat.LoginActivity;
-import edu.cmu.semat.TeamPickerActivity;
 import edu.cmu.semat.utils.HTTPUtils;
 import edu.cmu.semat.utils.SharedPreferencesUtil;
 
