@@ -1,27 +1,23 @@
 package edu.cmu.semat;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
+import ws.FetchTeamsTask;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import edu.cmu.semat.entities.Team;
-import edu.cmu.semat.utils.HTTPUtils;
 import edu.cmu.semat.utils.SharedPreferencesUtil;
 
 public class TeamPickerActivity extends ListActivity {
 
 	private static final String TAG = "TeamPickerActivity";
 	
-	private static ArrayList<Team> teams = null;	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +25,17 @@ public class TeamPickerActivity extends ListActivity {
 		setContentView(R.layout.team_picker);
 		
 		Log.v(TAG, "onCreate()");
-		new FetchTeamsTask().execute("");
+		new FetchTeamsTask((MyApplication) getApplication(), this,
+				SharedPreferencesUtil.getAuthToken(TeamPickerActivity.this, ""),
+				SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, ""), 0, 0).execute();						
 	}
 
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		String teamName = (String) getListAdapter().getItem(position);
+		@SuppressWarnings("unchecked")
+		ArrayList<Team> teams = (ArrayList<Team>)((MyApplication) getApplication()).get("teams");
 		int teamId = teams.get(position).getId();
 
 		Toast.makeText(this, teamName + " selected", Toast.LENGTH_LONG).show();
@@ -43,7 +43,7 @@ public class TeamPickerActivity extends ListActivity {
 		moveToNextIntent(teamId, teamName);
 	}
 	
-	private void moveToNextIntent(int selectedTeamId, String selectedTeamName) {
+	public void moveToNextIntent(int selectedTeamId, String selectedTeamName) {
 		Log.v(TAG, "TeamActivity: selected team: " + selectedTeamName + " (" + selectedTeamId + ")");
 		SharedPreferencesUtil.setCurrentTeamId(this, selectedTeamId);
 		SharedPreferencesUtil.setCurrentTeamName(this, selectedTeamName);
@@ -68,47 +68,6 @@ public class TeamPickerActivity extends ListActivity {
 	// has been established, the AsyncTask downloads the contents of the webpage as
 	// an InputStream. Finally, the InputStream is converted into a string, which is
 	// displayed in the UI by the AsyncTask's onPostExecute method.
-	private class FetchTeamsTask extends AsyncTask<String, Void, String> {
-		@Override
-		protected String doInBackground(String... urls) {
 
-			Log.v(TAG, "fetching teams from server");
-			try {
-				String email = SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
-				String data = "?user_token=" + SharedPreferencesUtil.getAuthToken(TeamPickerActivity.this, "") + 
-				              "&user_email=" + SharedPreferencesUtil.getCurrentEmailAddress(TeamPickerActivity.this, "");
-
-				String url = "https://semat.herokuapp.com/api/v1/users/" + email + "/teams.json";
-				
-				return HTTPUtils.sendGet(TeamPickerActivity.this, url + data);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		// onPostExecute displays the results of the AsyncTask.
-		@Override
-		protected void onPostExecute(String result) {
-			Log.v(TAG, "Performing team fetch callback");
-			if(result == null){
-				Toast.makeText(TeamPickerActivity.this, "No data received!", Toast.LENGTH_LONG).show();
-				return;
-			}
-			TeamPickerActivity.teams = Team.makeCollectionfromJSONString(result);
-
-//          Consider allowing the user to always pick their team			
-//			if(teams.size() == 1) {
-//				moveToNextIntent(teams.get(0).getId(), teams.get(0).getName());
-//			}
-					
-		    ArrayAdapter<String> adapter = new ArrayAdapter<String>(TeamPickerActivity.this,
-		            android.R.layout.simple_list_item_1, Team.arrayListToNames(TeamPickerActivity.teams));
-			
-			setListAdapter(adapter); 
-		}
-	}
 
 }
